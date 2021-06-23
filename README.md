@@ -8,7 +8,9 @@
 
 ```
 "emmet.includeLanguages": {
-        "javascript": "javascriptreact",
-        "typescript": "typescriptreact"
-    }
+    "javascript": "javascriptreact",
+    "typescript": "typescriptreact"
+}
 ```
+
+- Create typescript react app with `npx create-react-app app-name --template typescript`
