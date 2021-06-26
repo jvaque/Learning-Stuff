@@ -4,9 +4,22 @@ var pwgl = {};
 pwgl.ongoingImageLoads = [];
 var canvas;
 
+// Import shaders
+import vertexShaderGLSL from '../shaders/vertex-shader.glsl.js';
+import fragmentShaderGLSL from '../shaders/fragment-shader.glsl.js';
+
 // Variables for translations and rotations
-var transY = 0, transZ = 0;
-var xRot = yRot = zRot = xOffs = yOffs = drag = 0;
+var transY = 0;
+var transZ = 0;
+
+var xRot = 0;
+var yRot = 0;
+var zRot = 0;
+
+var xOffs = 0;
+var yOffs = 0;
+
+var drag = 0;
 
 // Keep track of pressed down keys
 pwgl.listOffPressedKeys = [];
@@ -32,8 +45,8 @@ function createGLContext(canvas) {
   return context;
 }
 
-function loadShaderFromDOM(id) {
-  var shaderScript = document.getElementById(id);
+function loadShader(shaderScript, shaderType) {
+  // var shaderScript = document.getElementById(id);
 
   // If we dont find an element with the specified id
   // we do and early exit
@@ -41,30 +54,30 @@ function loadShaderFromDOM(id) {
     return null;
   }
 
-  // Otherwise loop though the clildren for the found DOM element and
-  // build up the shader source code as a string
-  var shaderSource = "";
-  var currentChild = shaderScript.firstChild;
-  while (currentChild) {
-    if (currentChild.nodeType == 3) {
-      // 3 corresponds to TEXT_NODE
-      shaderSource += currentChild.textContent;
-    }
-    currentChild =currentChild.nextSibling;
-  }
+  // // Otherwise loop though the clildren for the found DOM element and
+  // // build up the shader source code as a string
+  // var shaderSource = "";
+  // var currentChild = shaderScript.firstChild;
+  // while (currentChild) {
+  //   if (currentChild.nodeType == 3) {
+  //     // 3 corresponds to TEXT_NODE
+  //     shaderSource += currentChild.textContent;
+  //   }
+  //   currentChild =currentChild.nextSibling;
+  // }
 
   // Create a WebGL shader object according to type of shader, i.e.,
   // vertex or fragment shader.
   var shader;
-  if (shaderScript.type == "x-shader/x-fragment") {
+  if (shaderType == "x-shader/x-fragment") {
     shader = gl.createShader(gl.FRAGMENT_SHADER);
-  } else if (shaderScript.type == "x-shader/x-vertex") {
+  } else if (shaderType == "x-shader/x-vertex") {
     shader = gl.createShader(gl.VERTEX_SHADER);
   } else {
     return null;
   }
 
-  gl.shaderSource(shader, shaderSource);
+  gl.shaderSource(shader, shaderScript);
   gl.compileShader(shader);
 
   // Check compiling status
@@ -78,8 +91,8 @@ function loadShaderFromDOM(id) {
 
 function setupShaders() {
   // Create vertex and fragment shaders
-  var vertexShader = loadShaderFromDOM("shader-vs");
-  var fragmentShader = loadShaderFromDOM("shader-fs");
+  var vertexShader = loadShader(vertexShaderGLSL, "x-shader/x-vertex");
+  var fragmentShader = loadShader(fragmentShaderGLSL, "x-shader/x-fragment");
 
   // Create a WebGL program object
   var shaderProgram = gl.createProgram();
@@ -661,7 +674,7 @@ function wheelHandler(ev) {
 // It is the firts function to be loaded when the html doc is loaded into
 function startup() {
   // retrieve html canvas
-  canvas = document.getElementById("myGlCanvas");
+  canvas = document.getElementById("canvas-web-gl-week-10");
   canvas = WebGLDebugUtils.makeLostContextSimulatingCanvas(canvas);
   canvas.addEventListener('webglcontextlost', handleContextLost, false);
   canvas.addEventListener('webglcontextrestored', handleContextRestored, false);
@@ -678,7 +691,7 @@ function startup() {
 
   init();
 
-  pwgl.fpsCounter = document.getElementById("fps");
+  pwgl.fpsCounter = document.getElementById("fps-week-10");
   // Draw the complete scene
   draw();
 }
@@ -698,3 +711,9 @@ function handleContextRestored(event) {
   init();
   pwgl.requestId = requestAnimFrame(draw, canvas);
 }
+
+function main(){
+  startup();
+}
+
+window.addEventListener('load', main)
