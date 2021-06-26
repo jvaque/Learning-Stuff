@@ -676,7 +676,7 @@ function wheelHandler(ev) {
 // It is the firts function to be loaded when the html doc is loaded into
 function startup() {
   // retrieve html canvas
-  canvas = document.getElementById("myGlCanvas");
+  canvas = document.getElementById("canvas-web-gl-week-11");
   canvas = WebGLDebugUtils.makeLostContextSimulatingCanvas(canvas);
   canvas.addEventListener('webglcontextlost', handleContextLost, false);
   canvas.addEventListener('webglcontextrestored', handleContextRestored, false);
@@ -693,7 +693,7 @@ function startup() {
 
   init();
 
-  pwgl.fpsCounter = document.getElementById("fps");
+  pwgl.fpsCounter = document.getElementById("fps-week-11");
   // Draw the complete scene
   draw();
 }
