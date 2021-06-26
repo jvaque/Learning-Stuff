@@ -10,11 +10,16 @@ var hexagonVertexBuffer;
 var stripVertexBuffer;
 var stripElementBuffer;
 
+// Import shaders
+// one of them is wrong
+import vertexShaderGLSL from '../shaders/vertex-shader-unknown-v4.glsl.js';
+import fragmentShaderGLSL from '../shaders/fragment-shader-basic-v3.glsl.js';
+
 // This function is the entry point of this webgl application
 // It is the firts function to be loaded when the html doc is loaded into
 function startup() {
   // retrieve html canvas
-  canvas = document.getElementById("myGlCanvas");
+  canvas = document.getElementById("canvas-web-gl-week-5");
   // Create webgl contex. Here, the debuggin context is created by calling
   // a functin in the library (createGLContext(canvas))
   gl = WebGLDebugUtils.makeDebugContext(createGLContext(canvas));
@@ -51,59 +56,58 @@ function createGLContext(canvas) {
 // Load shaders from DOM (document object model). This function will be
 // called in setupShaders(). The parameters for argument id will be
 // "shader-vs" and "shader-fs"
-function loadShaderFromDOM(id) {
-  var shaderScript = document.getElementById(id);
+function loadShader(shaderScript, shaderType) {
+  // var shaderScript = document.getElementById(id);
 
-  // If there is no shader scripts, the function exists
+  // If we dont find an element with the specified id
+  // we do and early exit
   if (!shaderScript) {
     return null;
   }
 
-  // Otherwise loop though the clildren for the found DOM element and
-  // build up the shader source code as a string
-  var shaderSource = "";
-  var currentChild = shaderScript.firstChild;
-  while (currentChild) {
-    if (currentChild.nodeType == 3) {
-      // 3 corresponds to TEXT_NODE
-      shaderSource += currentChild.textContent;
-    }
-    currentChild =currentChild.nextSibling;
-  }
+  // // Otherwise loop though the clildren for the found DOM element and
+  // // build up the shader source code as a string
+  // var shaderSource = "";
+  // var currentChild = shaderScript.firstChild;
+  // while (currentChild) {
+  //   if (currentChild.nodeType == 3) {
+  //     // 3 corresponds to TEXT_NODE
+  //     shaderSource += currentChild.textContent;
+  //   }
+  //   currentChild =currentChild.nextSibling;
+  // }
 
   // Create a WebGL shader object according to type of shader, i.e.,
   // vertex or fragment shader.
   var shader;
-  if (shaderScript.type == "x-shader/x-fragment") {
-    // Call WebGL function createShader() to create fragment
-    // shader object
+  if (shaderType == "x-shader/x-fragment") {
+    // Call WebGL function createShader() to create fragment shader object
     shader = gl.createShader(gl.FRAGMENT_SHADER);
-  } else if (shaderScript.type == "x-shader/x-vertex") {
-    // Call WebGL function createShader() to create vertex
-    // shader object
+  } else if (shaderType == "x-shader/x-vertex") {
+    // Call WebGL function createShader() to create vertex shader object
     shader = gl.createShader(gl.VERTEX_SHADER);
   } else {
     return null;
   }
 
   // Load the shader source code (shaderSource) to the shader object
-  gl.shaderSource(shader, shaderSource);
+  gl.shaderSource(shader, shaderScript);
   // Compile the shader
   gl.compileShader(shader);
 
   // Check compiling status
   if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+    alert("Compiler!!!!!!!!");
     alert(gl.getShaderInfoLog(shader));
     return null;
   }
-
   return shader;
 }
 
 function setupShaders() {
   // Create vertex and fragment shaders
-  vertexShader = loadShaderFromDOM("shader-vs");
-  fragmentShader = loadShaderFromDOM("shader-fs");
+  var vertexShader = loadShader(vertexShaderGLSL, "x-shader/x-vertex");
+  var fragmentShader = loadShader(fragmentShaderGLSL, "x-shader/x-fragment");
 
   // Create a WebGL program object
   shaderProgram = gl.createProgram();
@@ -302,3 +306,9 @@ function draw() {
   // Draw line for the lowe strip using index 11-21
   gl.drawArrays(gl.LINE_STRIP, 11, 11);
 }
+
+function main(){
+  startup();
+}
+
+window.addEventListener('load', main)
