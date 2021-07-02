@@ -1,23 +1,9 @@
 export function loadShader(gl, shaderScript, shaderType) {
-    // var shaderScript = document.getElementById(id);
-
-    // If we dont find an element with the specified id
-    // we do and early exit
+    // If the function is called without passing in a shader script we do an 
+    // early exit
     if (!shaderScript) {
         return null;
     }
-
-    // // Otherwise loop though the clildren for the found DOM element and
-    // // build up the shader source code as a string
-    // var shaderSource = "";
-    // var currentChild = shaderScript.firstChild;
-    // while (currentChild) {
-    //   if (currentChild.nodeType == 3) {
-    //     // 3 corresponds to TEXT_NODE
-    //     shaderSource += currentChild.textContent;
-    //   }
-    //   currentChild =currentChild.nextSibling;
-    // }
 
     // Create a WebGL shader object according to type of shader, i.e.,
     // vertex or fragment shader.
@@ -32,16 +18,17 @@ export function loadShader(gl, shaderScript, shaderType) {
         return null;
     }
 
-    // Load the shader source code (shaderSource) to the shader object
+    // Load the shader source code (shaderScript) to the shader object
     gl.shaderSource(shader, shaderScript);
     // Compile the shader
     gl.compileShader(shader);
 
     // Check compiling status
     if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS) && !gl.isContextLost()) {
-        alert("Compiler!!!!!!!!");
+        alert("Error while attempting to load shaders!!");
         alert(gl.getShaderInfoLog(shader));
         return null;
     }
+
     return shader;
 }
