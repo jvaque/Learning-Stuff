@@ -8,6 +8,8 @@ var canvas;
 import vertexShaderGLSL from '../shaders/vertex-shader.glsl.js';
 import fragmentShaderGLSL from '../shaders/fragment-shader-spotlight.glsl.js';
 
+import * as glUtils from './glUtils.js';
+
 // Variables for translations and rotations
 var transY = 0;
 var transZ = 0;
@@ -45,54 +47,10 @@ function createGLContext(canvas) {
   return context;
 }
 
-function loadShader(shaderScript, shaderType) {
-  // var shaderScript = document.getElementById(id);
-
-  // If we dont find an element with the specified id
-  // we do and early exit
-  if (!shaderScript) {
-    return null;
-  }
-
-  // // Otherwise loop though the clildren for the found DOM element and
-  // // build up the shader source code as a string
-  // var shaderSource = "";
-  // var currentChild = shaderScript.firstChild;
-  // while (currentChild) {
-  //   if (currentChild.nodeType == 3) {
-  //     // 3 corresponds to TEXT_NODE
-  //     shaderSource += currentChild.textContent;
-  //   }
-  //   currentChild =currentChild.nextSibling;
-  // }
-
-  // Create a WebGL shader object according to type of shader, i.e.,
-  // vertex or fragment shader.
-  var shader;
-  if (shaderType == "x-shader/x-fragment") {
-    shader = gl.createShader(gl.FRAGMENT_SHADER);
-  } else if (shaderType == "x-shader/x-vertex") {
-    shader = gl.createShader(gl.VERTEX_SHADER);
-  } else {
-    return null;
-  }
-
-  gl.shaderSource(shader, shaderScript);
-  gl.compileShader(shader);
-
-  // Check compiling status
-  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS) && !gl.isContextLost()) {
-    alert("Compiler!!!!!!!!");
-    alert(gl.getShaderInfoLog(shader));
-    return null;
-  }
-  return shader;
-}
-
 function setupShaders() {
   // Create vertex and fragment shaders
-  var vertexShader = loadShader(vertexShaderGLSL, "x-shader/x-vertex");
-  var fragmentShader = loadShader(fragmentShaderGLSL, "x-shader/x-fragment");
+  var vertexShader = glUtils.loadShader(gl, vertexShaderGLSL, "x-shader/x-vertex");
+  var fragmentShader = glUtils.loadShader(gl, fragmentShaderGLSL, "x-shader/x-fragment");
 
   // Create a WebGL program object
   var shaderProgram = gl.createProgram();
