@@ -25,8 +25,8 @@ export function loadShader(gl, shaderScript, shaderType) {
 
     // Check compiling status
     if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS) && !gl.isContextLost()) {
-        alert("Error while attempting to load shaders!!");
-        alert(gl.getShaderInfoLog(shader));
+        alert('An error occurred compiling the shaders: ' + gl.getShaderInfoLog(shader));
+        gl.deleteShader(shader);
         return null;
     }
 
