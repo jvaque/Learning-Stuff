@@ -26,27 +26,6 @@ var drag = 0;
 // Keep track of pressed down keys
 pwgl.listOffPressedKeys = [];
 
-function createGLContext(canvas) {
-  var names = ["webgl", "experimental-webgl"];
-  var context = null;
-  for (var i = 0; i < names.length; i++) {
-    try {
-      context = canvas.getContext(names[i]);
-    } catch (e) {}
-    if (context) {
-        break;
-      }
-  }
-
-  if (context) {
-    context.viewportWidth = canvas.width;
-    context.viewportHeight = canvas.height;
-  } else {
-    alert("Failed to create WebGL context!");
-  }
-  return context;
-}
-
 function setupShaders() {
   // Create vertex and fragment shaders
   var vertexShader = glUtils.loadShader(gl, vertexShaderGLSL, "x-shader/x-vertex");
@@ -645,7 +624,7 @@ function startup() {
   canvas.addEventListener('mousewheel', wheelHandler, false);
   canvas.addEventListener('DOMMouseScroll', wheelHandler, false);
 
-  gl = createGLContext(canvas);
+  gl = glUtils.createGLContext(canvas);
 
   init();
 

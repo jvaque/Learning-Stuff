@@ -24,8 +24,8 @@ function startup() {
   // retrieve html canvas
   canvas = document.getElementById("canvas-web-gl-week-6");
   // Create webgl contex. Here, the debuggin context is created by calling
-  // a functin in the library (createGLContext(canvas))
-  gl = WebGLDebugUtils.makeDebugContext(createGLContext(canvas));
+  // a functin in the library (glUtils.createGLContext(canvas))
+  gl = WebGLDebugUtils.makeDebugContext(glUtils.createGLContext(canvas));
   setupShaders();
   setupBuffers();
   // Set the colour to draw width
@@ -33,29 +33,6 @@ function startup() {
   gl.enable(gl.DEPTH_TEST);
 
   draw();
-}
-
-// Create WebGL context. Recall that we have us getContext("2D")
-// to create a 2D contex for drawing 2D graphics
-function createGLContext(canvas) {
-  var names = ["webgl", "experimental-webgl"];
-  var context = null;
-  for (var i = 0; i < names.length; i++) {
-    try {
-      context = canvas.getContext(names[i]);
-    } catch (e) {}
-    if (context) {
-        break;
-      }
-  }
-
-  if (context) {
-    context.viewportWidth = canvas.width;
-    context.viewportHeight = canvas.height;
-  } else {
-    alert("Failed to create WebGL context!");
-  }
-  return context;
 }
 
 function setupShaders() {

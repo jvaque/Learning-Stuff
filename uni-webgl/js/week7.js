@@ -13,27 +13,6 @@ import fragmentShaderGLSL from '../shaders/fragment-shader-basic-v2.glsl.js';
 
 import * as glUtils from './glUtils.js';
 
-function createGLContext(canvas) {
-  var names = ["webgl", "experimental-webgl"];
-  var context = null;
-  for (var i = 0; i < names.length; i++) {
-    try {
-      context = canvas.getContext(names[i]);
-    } catch (e) {}
-    if (context) {
-        break;
-      }
-  }
-
-  if (context) {
-    context.viewportWidth = canvas.width;
-    context.viewportHeight = canvas.height;
-  } else {
-    alert("Failed to create WebGL context!");
-  }
-  return context;
-}
-
 function setupShaders() {
   // Create vertex and fragment shaders
   var vertexShader = glUtils.loadShader(gl, vertexShaderGLSL, "x-shader/x-vertex");
@@ -399,7 +378,7 @@ function startup() {
     canvas.loseContext();
   });
 
-  gl = createGLContext(canvas);
+  gl = glUtils.createGLContext(canvas);
   setupShaders();
   setupBuffers();
   setupTextures();
