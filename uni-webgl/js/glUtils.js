@@ -54,3 +54,54 @@ export function createGLContext(canvas) {
 
     return context;
 }
+
+export function addCubeVertexPositionBuffers(gl) {
+    const cubeVertexPositionBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexPositionBuffer);
+
+    var cubeVertexPosition = [
+        // Front face
+        1.0,  1.0,  1.0, //v0
+        -1.0,  1.0,  1.0, //v1
+        -1.0, -1.0,  1.0, //v2
+        1.0, -1.0,  1.0, //v3
+
+        // Back face
+        1.0,  1.0, -1.0, //v4
+        -1.0,  1.0, -1.0, //v5
+        -1.0, -1.0, -1.0, //v6
+        1.0, -1.0, -1.0, //v7
+
+        // Left face
+        -1.0,  1.0,  1.0, //v8
+        -1.0,  1.0, -1.0, //v9
+        -1.0, -1.0, -1.0, //v10
+        -1.0, -1.0,  1.0, //v11
+
+        // Right face
+        1.0,  1.0,  1.0, //v12
+        1.0, -1.0,  1.0, //v13
+        1.0, -1.0, -1.0, //v14
+        1.0,  1.0, -1.0, //v15
+
+        // Top face
+        1.0,  1.0,  1.0, //v16
+        1.0,  1.0, -1.0, //v17
+        -1.0,  1.0, -1.0, //v18
+        -1.0,  1.0,  1.0, //v19
+
+        // Bottom face
+        1.0, -1.0,  1.0, //v20
+        1.0, -1.0, -1.0, //v21
+        -1.0, -1.0, -1.0, //v22
+        -1.0, -1.0,  1.0, //v23
+    ];
+
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(cubeVertexPosition), gl.STATIC_DRAW);
+
+    return {
+        vertexPositionBuffer: cubeVertexPositionBuffer,
+        VERTEX_POS_BUF_ITEM_SIZE: 3,
+        VERTEX_POS_BUF_NUM_ITEMS: 24
+    };
+}
