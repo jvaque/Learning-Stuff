@@ -182,3 +182,55 @@ export function addCubeVertexTextureCoordinateBuffers(gl) {
         BUF_NUM_ITEMS: 24,
     }
 }
+
+export function addCubeVertexNormalBuffers(gl){
+    // Setup normal buffer for lighting calculations
+    const cubeVertexNormalBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexNormalBuffer);
+
+    var cubeVertexNormals = [
+        // Front face
+         0.0,  0.0,  1.0, //v0
+         0.0,  0.0,  1.0, //v1
+         0.0,  0.0,  1.0, //v2
+         0.0,  0.0,  1.0, //v3
+
+        // Back face
+         0.0,  0.0, -1.0, //v4
+         0.0,  0.0, -1.0, //v5
+         0.0,  0.0, -1.0, //v6
+         0.0,  0.0, -1.0, //v7
+
+        // Left face
+        -1.0,  0.0,  0.0, //v1
+        -1.0,  0.0,  0.0, //v5
+        -1.0,  0.0,  0.0, //v6
+        -1.0,  0.0,  0.0, //v2
+
+        // Right face
+         1.0,  0.0,  0.0, //v0
+         1.0,  0.0,  0.0, //v3
+         1.0,  0.0,  0.0, //v7
+         1.0,  0.0,  0.0, //v4
+
+        // Top face
+         0.0,  1.0,  0.0, //v0
+         0.0,  1.0,  0.0, //v4
+         0.0,  1.0,  0.0, //v5
+         0.0,  1.0,  0.0, //v1
+
+        // Bottom face
+         0.0, -1.0,  0.0, //v3
+         0.0, -1.0,  0.0, //v7
+         0.0, -1.0,  0.0, //v6
+         0.0, -1.0,  0.0, //v2
+    ];
+
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(cubeVertexNormals), gl.STATIC_DRAW);
+
+    return {
+        Buffer: cubeVertexNormalBuffer,
+        BUF_ITEM_SIZE: 3,
+        BUF_NUM_ITEMS: 24,
+    }
+}

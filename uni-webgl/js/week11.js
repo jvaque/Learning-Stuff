@@ -150,51 +150,7 @@ function setupCubeBuffers() {
 
   pwgl.CUBE.VERTEX_TEX_COORD = glUtils.addCubeVertexTextureCoordinateBuffers(gl);
 
-  // Setup normal buffer for lighting calculations
-  pwgl.cubeVertexNormalBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, pwgl.cubeVertexNormalBuffer);
-
-  var cubeVertexNormals = [
-    // Front face
-     0.0,  0.0,  1.0, //v0
-     0.0,  0.0,  1.0, //v1
-     0.0,  0.0,  1.0, //v2
-     0.0,  0.0,  1.0, //v3
-
-    // Back face
-     0.0,  0.0, -1.0, //v4
-     0.0,  0.0, -1.0, //v5
-     0.0,  0.0, -1.0, //v6
-     0.0,  0.0, -1.0, //v7
-
-    // Left face
-    -1.0,  0.0,  0.0, //v1
-    -1.0,  0.0,  0.0, //v5
-    -1.0,  0.0,  0.0, //v6
-    -1.0,  0.0,  0.0, //v2
-
-    // Right face
-     1.0,  0.0,  0.0, //v0
-     1.0,  0.0,  0.0, //v3
-     1.0,  0.0,  0.0, //v7
-     1.0,  0.0,  0.0, //v4
-
-    // Top face
-     0.0,  1.0,  0.0, //v0
-     0.0,  1.0,  0.0, //v4
-     0.0,  1.0,  0.0, //v5
-     0.0,  1.0,  0.0, //v1
-
-    // Bottom face
-     0.0, -1.0,  0.0, //v3
-     0.0, -1.0,  0.0, //v7
-     0.0, -1.0,  0.0, //v6
-     0.0, -1.0,  0.0, //v2
-  ];
-
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(cubeVertexNormals), gl.STATIC_DRAW);
-  pwgl.CUBE_VERTEX_NORMAL_BUF_ITEM_SIZE = 3;
-  pwgl.CUBE_VERTEX_NORMAL_BUF_NUM_ITEMS = 24;
+  pwgl.CUBE.VERTEX_NORMAL = glUtils.addCubeVertexNormalBuffers(gl);
 }
 
 function setupLights() {
@@ -308,9 +264,9 @@ function drawCube(texture) {
                          gl.FLOAT, false, 0, 0);
 
   // Bind normal buffer
-  gl.bindBuffer(gl.ARRAY_BUFFER, pwgl.cubeVertexNormalBuffer);
+  gl.bindBuffer(gl.ARRAY_BUFFER, pwgl.CUBE.VERTEX_NORMAL.Buffer);
   gl.vertexAttribPointer(pwgl.vertexNormalAttributeLoc,
-                         pwgl.CUBE_VERTEX_NORMAL_BUF_ITEM_SIZE,
+                         pwgl.CUBE.VERTEX_NORMAL.BUF_ITEM_SIZE,
                          gl.FLOAT, false, 0, 0);
 
   // Bind texture buffer
