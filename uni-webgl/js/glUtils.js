@@ -109,7 +109,7 @@ export function addCubeVertexPositionBuffers(gl) {
 export function addCubeVertexIndexBuffers(gl) {
     const cubeVertexIndexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexIndexBuffer);
-    
+
     // For simplicity, each face will be drawn as gl.TRIANGLES, therefore
     // the indices for each triangle are specified.
     var cubeVertexIndices = [
@@ -120,12 +120,65 @@ export function addCubeVertexIndexBuffers(gl) {
         16, 17, 18,   16, 18, 19,    // Top face
         20, 22, 21,   20, 23, 22     // Bottom face
     ];
-    
+
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(cubeVertexIndices), gl.STATIC_DRAW);
 
     return {
         Buffer: cubeVertexIndexBuffer,
         BUF_ITEM_SIZE: 1,
         BUF_NUM_ITEMS: 36,
+    }
+}
+
+export function addCubeVertexTextureCoordinateBuffers(gl) {
+    // Setup buffer with texture coordinates
+    const cubeVertexTextureCoordinateBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexTextureCoordinateBuffer);
+
+    // Think about how the coordinates are asigned. Ref. vertex coords.
+    var textureCoodinates = [
+        // Front face
+        0.0, 0.0, //v0
+        1.0, 0.0, //v1
+        1.0, 1.0, //v2
+        0.0, 1.0, //v3
+
+        // Back face
+        0.0, 1.0, //v4
+        1.0, 1.0, //v5
+        1.0, 0.0, //v6
+        0.0, 0.0, //v7
+
+        // Left face
+        0.0, 1.0, //v1
+        1.0, 1.0, //v5
+        1.0, 0.0, //v6
+        0.0, 0.0, //v2
+
+        // Right face
+        0.0, 1.0, //v0
+        1.0, 1.0, //v3
+        1.0, 0.0, //v7
+        0.0, 0.0, //v4
+
+        // Top face
+        0.0, 1.0, //v0
+        1.0, 1.0, //v4
+        1.0, 0.0, //v5
+        0.0, 0.0, //v1
+
+        // Bottom face
+        0.0, 1.0, //v3
+        1.0, 1.0, //v7
+        1.0, 0.0, //v6
+        0.0, 0.0  //v2
+    ];
+
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoodinates), gl.STATIC_DRAW);
+
+    return {
+        Buffer: cubeVertexTextureCoordinateBuffer,
+        BUF_ITEM_SIZE: 2,
+        BUF_NUM_ITEMS: 24,
     }
 }
