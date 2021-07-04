@@ -142,25 +142,11 @@ function setupFloorBuffers() {
 }
 
 function setupCubeBuffers() {
-  pwgl.cube = glUtils.addCubeVertexPositionBuffers(gl);
+  pwgl.CUBE = {};
 
-  pwgl.cubeVertexIndexBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, pwgl.cubeVertexIndexBuffer);
+  pwgl.CUBE.VERTEX_POS = glUtils.addCubeVertexPositionBuffers(gl);
 
-  // For simplicity, each face will be drawn as gl.TRIANGLES, therefore
-  // the indices for each triangle are specified.
-  var cubeVertexIndices = [
-     0,  1,  2,    0,  2,  3,    // Front face
-     4,  6,  5,    4,  7,  6,    // Back face
-     8,  9, 10,    8, 10, 11,    // Left face
-    12, 13, 14,   12, 14, 15,    // Right face
-    16, 17, 18,   16, 18, 19,    // Top face
-    20, 22, 21,   20, 23, 22     // Bottom face
-  ];
-
-  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(cubeVertexIndices), gl.STATIC_DRAW);
-  pwgl.CUBE_VERTEX_INDEX_BUF_ITEM_SIZE = 1;
-  pwgl.CUBE_VERTEX_INDEX_BUF_NUM_ITEMS = 36;
+  pwgl.CUBE.VERTEX_INDEX = glUtils.addCubeVertexIndexBuffers(gl);
 
   // Setup buffer with texture coordinates
   pwgl.cubeVertexTextureCoordinateBuffer = gl.createBuffer();
@@ -361,9 +347,9 @@ function drawFloor() {
 function drawCube(texture) {
   // Draw the cube
   // Bind floor vertex buffer
-  gl.bindBuffer(gl.ARRAY_BUFFER, pwgl.cube.vertexPositionBuffer);
+  gl.bindBuffer(gl.ARRAY_BUFFER, pwgl.CUBE.VERTEX_POS.Buffer);
   gl.vertexAttribPointer(pwgl.vertexPositionAttributeLoc,
-                         pwgl.cube.VERTEX_POS_BUF_ITEM_SIZE,
+                         pwgl.CUBE.VERTEX_POS.BUF_ITEM_SIZE,
                          gl.FLOAT, false, 0, 0);
 
   // Bind normal buffer
@@ -382,8 +368,8 @@ function drawCube(texture) {
   gl.bindTexture(gl.TEXTURE_2D, texture);
 
   // Bind vertex index buffer
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, pwgl.cubeVertexIndexBuffer);
-  gl.drawElements(gl.TRIANGLES, pwgl.CUBE_VERTEX_INDEX_BUF_NUM_ITEMS,
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, pwgl.CUBE.VERTEX_INDEX.Buffer);
+  gl.drawElements(gl.TRIANGLES, pwgl.CUBE.VERTEX_INDEX.BUF_NUM_ITEMS,
     gl.UNSIGNED_SHORT, 0);
 }
 

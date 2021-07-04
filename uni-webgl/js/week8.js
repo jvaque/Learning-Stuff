@@ -117,7 +117,9 @@ function setupFloorBuffers() {
 }
 
 function setupCubeBuffers() {
-  pwgl.cube = glUtils.addCubeVertexPositionBuffers(gl);
+  pwgl.CUBE = {};
+
+  pwgl.CUBE.VERTEX_POS = glUtils.addCubeVertexPositionBuffers(gl);
 
   pwgl.cubeVertexIndexBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, pwgl.cubeVertexIndexBuffer);
@@ -261,9 +263,9 @@ function drawFloor() {
 }
 
 function drawCube(texture) {
-  gl.bindBuffer(gl.ARRAY_BUFFER, pwgl.cube.vertexPositionBuffer);
+  gl.bindBuffer(gl.ARRAY_BUFFER, pwgl.CUBE.VERTEX_POS.Buffer);
   gl.vertexAttribPointer(pwgl.vertexPositionAttributeLoc,
-                         pwgl.cube.VERTEX_POS_BUF_ITEM_SIZE,
+                         pwgl.CUBE.VERTEX_POS.BUF_ITEM_SIZE,
                          gl.FLOAT, false, 0, 0);
 
   gl.bindBuffer(gl.ARRAY_BUFFER, pwgl.cubeVertexTextureCoordinateBuffer);

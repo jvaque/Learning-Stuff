@@ -100,8 +100,32 @@ export function addCubeVertexPositionBuffers(gl) {
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(cubeVertexPosition), gl.STATIC_DRAW);
 
     return {
-        vertexPositionBuffer: cubeVertexPositionBuffer,
-        VERTEX_POS_BUF_ITEM_SIZE: 3,
-        VERTEX_POS_BUF_NUM_ITEMS: 24
+        Buffer: cubeVertexPositionBuffer,
+        BUF_ITEM_SIZE: 3,
+        BUF_NUM_ITEMS: 24
     };
+}
+
+export function addCubeVertexIndexBuffers(gl) {
+    const cubeVertexIndexBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexIndexBuffer);
+    
+    // For simplicity, each face will be drawn as gl.TRIANGLES, therefore
+    // the indices for each triangle are specified.
+    var cubeVertexIndices = [
+         0,  1,  2,    0,  2,  3,    // Front face
+         4,  6,  5,    4,  7,  6,    // Back face
+         8,  9, 10,    8, 10, 11,    // Left face
+        12, 13, 14,   12, 14, 15,    // Right face
+        16, 17, 18,   16, 18, 19,    // Top face
+        20, 22, 21,   20, 23, 22     // Bottom face
+    ];
+    
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(cubeVertexIndices), gl.STATIC_DRAW);
+
+    return {
+        Buffer: cubeVertexIndexBuffer,
+        BUF_ITEM_SIZE: 1,
+        BUF_NUM_ITEMS: 36,
+    }
 }
