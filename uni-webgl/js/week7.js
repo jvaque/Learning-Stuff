@@ -110,52 +110,7 @@ function setupCubeBuffers() {
 
   pwgl.CUBE.VERTEX_INDEX = glUtils.addCubeVertexIndexBuffers(gl);
 
-  // Setup buffer with texture coordinates
-  pwgl.cubeVertexTextureCoordinateBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, pwgl.cubeVertexTextureCoordinateBuffer);
-
-  // Think about how the coordinates are asigned. Ref. vertex coords.
-  var textureCoodinates = [
-    // Front face
-    0.0, 0.0, //v0
-    1.0, 0.0, //v1
-    1.0, 1.0, //v2
-    0.0, 1.0, //v3
-
-    // Back face
-    0.0, 1.0, //v4
-    1.0, 1.0, //v5
-    1.0, 0.0, //v6
-    0.0, 0.0, //v7
-
-    // Left face
-    0.0, 1.0, //v1
-    1.0, 1.0, //v5
-    1.0, 0.0, //v6
-    0.0, 0.0, //v2
-
-    // Right face
-    0.0, 1.0, //v0
-    1.0, 1.0, //v3
-    1.0, 0.0, //v7
-    0.0, 0.0, //v4
-
-    // Top face
-    0.0, 1.0, //v0
-    1.0, 1.0, //v4
-    1.0, 0.0, //v5
-    0.0, 0.0, //v1
-
-    // Bottom face
-    0.0, 1.0, //v3
-    1.0, 1.0, //v7
-    1.0, 0.0, //v6
-    0.0, 0.0  //v2
-  ];
-
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoodinates), gl.STATIC_DRAW);
-  pwgl.CUBE_VERTEX_TEX_COORD_BUF_ITEM_SIZE = 2;
-  pwgl.CUBE_VERTEX_TEX_COORD_BUF_NUM_ITEMS = 24;
+  pwgl.CUBE.VERTEX_TEX_COORD = glUtils.addCubeVertexTextureCoordinateBuffers(gl);
 }
 
 function setupTextures() {
@@ -239,9 +194,9 @@ function drawCube(texture) {
                          pwgl.CUBE.VERTEX_POS.BUF_ITEM_SIZE,
                          gl.FLOAT, false, 0, 0);
 
-  gl.bindBuffer(gl.ARRAY_BUFFER, pwgl.cubeVertexTextureCoordinateBuffer);
+  gl.bindBuffer(gl.ARRAY_BUFFER, pwgl.CUBE.VERTEX_TEX_COORD.Buffer);
   gl.vertexAttribPointer(pwgl.vertexTextureAttributeLoc,
-                         pwgl.CUBE_VERTEX_TEX_COORD_BUF_ITEM_SIZE,
+                         pwgl.CUBE.VERTEX_TEX_COORD.BUF_ITEM_SIZE,
                          gl.FLOAT, false, 0, 0);
 
   gl.activeTexture(gl.TEXTURE0);
