@@ -31,24 +31,27 @@ namespace mandelbrot
                     Complex c = new Complex(a, b);
                     Complex z = new Complex(0, 0);
 
-                    int iterations = 100;
-                    int iterationsRun = 0;
-                    for (int i = 0; i < iterations; i++)
-                    {
-                        z = Complex.Pow(z, 2);
-                        z += c;
-                        if (z.Magnitude > 2)
-                        {
-                            break;
-                        }
-                        iterationsRun++;
-                    }
+                    int iterationsRun = CalculateMandelbrot(z, c, 255);
 
                     bm.SetPixel(x, y, iterationsRun < 100 ? Color.Black : Color.White);
                 }
             }
 
             pictureBoxMandelbrot.Image = bm;
+        }
+
+        private int CalculateMandelbrot(Complex z, Complex c, int maxIterations)
+        {
+            int iteration = 0;
+
+            while (z.Magnitude <= 2 && iteration <= maxIterations)
+            {
+                iteration++;
+                z = Complex.Pow(z, 2);
+                z += c;
+            }
+
+            return iteration;
         }
     }
 }
