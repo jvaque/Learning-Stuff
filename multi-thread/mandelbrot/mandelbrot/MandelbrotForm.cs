@@ -27,12 +27,15 @@ namespace mandelbrot
 
             // double aOffset = 0;
             // double bOffset = 0;
-            double aOffset = 0.2599;
-            double bOffset = 0.0015;
+            // double aOffset = 0.2599;
+            // double bOffset = 0.0015;
             // double aOffset = -0.75;
             // double bOffset = 0.015;
             // double aOffset = -1.315180982097868;
             // double bOffset = 0.073481649996795;
+            double aOffset = -0.761574;
+            double bOffset = -0.0847596;
+
             double scale = 0.001;
             double scaleX = scale;
             double scaleY = scale;
@@ -54,8 +57,9 @@ namespace mandelbrot
             {
                 for (int y = 0; y < pictureBoxMandelbrot.Height; y++)
                 {
-                    double a = (((x - (widthDouble / 2)) / (widthDouble / 4)) * scaleX) + aOffset;
-                    double b = -(((y - (heightDouble / 2)) / (heightDouble / 4)) * scaleY) + bOffset;
+                    double a = (((x / widthDouble) - 0.5) * 4 * scaleX) + aOffset;
+                    double b = (((-y / heightDouble) + 0.5) * 4 * scaleY) + bOffset;
+
                     Complex c = new Complex(a, b);
                     Complex z = new Complex(0, 0);
 
@@ -95,12 +99,13 @@ namespace mandelbrot
             }
             else
             {
-                double ttttttttttt = (double)(iterationsRun) / maxIterations;
+                double normalizedIterations = (double)(iterationsRun) / maxIterations;
 
-                int blueness = (int)(255 * ttttttttttt);
+                int blueness = (int)(255 * normalizedIterations);
 
                 return Color.FromArgb(40, 10, blueness);
-                // return Color.White;
+                //return Color.FromArgb(blueness);
+                //return Color.White;
             }
         }
     }
