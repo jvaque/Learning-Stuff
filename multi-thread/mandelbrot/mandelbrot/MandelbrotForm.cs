@@ -22,19 +22,40 @@ namespace mandelbrot
         {
             Bitmap bm = new Bitmap(pictureBoxMandelbrot.Width, pictureBoxMandelbrot.Height);
 
-            double aOffset = -0.75;
-            double bOffset = 0.015;
-            //double aOffset = -1.315180982097868;
-            //double bOffset = 0.073481649996795;
-            double zoom = 0.00001;
-            int iterations = 10000;
+            double widthDouble = pictureBoxMandelbrot.Width;
+            double heightDouble = pictureBoxMandelbrot.Height;
+
+            // double aOffset = 0;
+            // double bOffset = 0;
+            double aOffset = 0.2599;
+            double bOffset = 0.0015;
+            // double aOffset = -0.75;
+            // double bOffset = 0.015;
+            // double aOffset = -1.315180982097868;
+            // double bOffset = 0.073481649996795;
+            double scale = 0.001;
+            double scaleX = scale;
+            double scaleY = scale;
+
+            int iterations = 255;
+
+            double aspectRatio = widthDouble / heightDouble;
+
+            if (aspectRatio > 1d)
+            {
+                scaleY /= aspectRatio;
+            }
+            else
+            {
+                scaleX *= aspectRatio;
+            }
 
             for (int x = 0; x < pictureBoxMandelbrot.Width; x++)
             {
                 for (int y = 0; y < pictureBoxMandelbrot.Height; y++)
                 {
-                    double a = (((double)(x - (pictureBoxMandelbrot.Width / 2)) / (double)(pictureBoxMandelbrot.Width / 4)) * zoom) + aOffset;
-                    double b = -(((double)(y - (pictureBoxMandelbrot.Height / 2)) / (double)(pictureBoxMandelbrot.Height / 4)) * zoom) + bOffset;
+                    double a = (((x - (widthDouble / 2)) / (widthDouble / 4)) * scaleX) + aOffset;
+                    double b = -(((y - (heightDouble / 2)) / (heightDouble / 4)) * scaleY) + bOffset;
                     Complex c = new Complex(a, b);
                     Complex z = new Complex(0, 0);
 
@@ -53,11 +74,14 @@ namespace mandelbrot
         {
             int iteration = 0;
 
-            while (z.Magnitude <= 2 && iteration < maxIterations)
+            for (iteration = 0; iteration < maxIterations; iteration++)
             {
-                iteration++;
-                z = Complex.Pow(z, 2);
-                z += c;
+                z = Complex.Pow(z, 2) + c;
+                
+                if (z.Magnitude > 2)
+                {
+                    break;
+                }
             }
 
             return iteration;
@@ -76,6 +100,7 @@ namespace mandelbrot
                 int blueness = (int)(255 * ttttttttttt);
 
                 return Color.FromArgb(40, 10, blueness);
+                // return Color.White;
             }
         }
     }

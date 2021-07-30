@@ -37,7 +37,7 @@ namespace mandelbrot
             // 
             this.pictureBoxMandelbrot.Location = new System.Drawing.Point(12, 12);
             this.pictureBoxMandelbrot.Name = "pictureBoxMandelbrot";
-            this.pictureBoxMandelbrot.Size = new System.Drawing.Size(776, 776);
+            this.pictureBoxMandelbrot.Size = new System.Drawing.Size(1256, 696);
             this.pictureBoxMandelbrot.TabIndex = 0;
             this.pictureBoxMandelbrot.TabStop = false;
             // 
@@ -45,7 +45,7 @@ namespace mandelbrot
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 800);
+            this.ClientSize = new System.Drawing.Size(1280, 720);
             this.Controls.Add(this.pictureBoxMandelbrot);
             this.Name = "MandelbrotForm";
             this.Text = "MandelbrotForm";
