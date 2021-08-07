@@ -4,8 +4,8 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Numerics;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -13,6 +13,8 @@ namespace mandelbrot
 {
     public partial class MandelbrotForm : Form
     {
+        private Bitmap _bm;
+
         public MandelbrotForm()
         {
             InitializeComponent();
@@ -20,7 +22,7 @@ namespace mandelbrot
 
         private void MandelbrotForm_Shown(object sender, EventArgs e)
         {
-            Bitmap bm = new Bitmap(pictureBoxMandelbrot.Width, pictureBoxMandelbrot.Height);
+            _bm = new Bitmap(pictureBoxMandelbrot.Width, pictureBoxMandelbrot.Height);
 
             double widthDouble = pictureBoxMandelbrot.Width;
             double heightDouble = pictureBoxMandelbrot.Height;
@@ -53,59 +55,105 @@ namespace mandelbrot
                 scaleX *= aspectRatio;
             }
 
-            for (int x = 0; x < pictureBoxMandelbrot.Width; x++)
+
+
+            //System.Drawing.Size(1256, 696); Copied from the Designer i think
+
+            SectionMandelbrotModel section1 = new SectionMandelbrotModel
             {
-                for (int y = 0; y < pictureBoxMandelbrot.Height; y++)
-                {
-                    double a = (((x / widthDouble) - 0.5) * 4 * scaleX) + aOffset;
-                    double b = (((-y / heightDouble) + 0.5) * 4 * scaleY) + bOffset;
+                SectionBitmap = new Bitmap(628, 348),
+                PointStartX = 0,
+                PointStartY = 0
+            };
+            SectionMandelbrotModel section2 = new SectionMandelbrotModel
+            {
+                SectionBitmap = new Bitmap(628, 348),
+                PointStartX = 628,
+                PointStartY = 0
+            };
+            SectionMandelbrotModel section3 = new SectionMandelbrotModel
+            {
+                SectionBitmap = new Bitmap(628, 348),
+                PointStartX = 0,
+                PointStartY = 348
+            };
+            SectionMandelbrotModel section4 = new SectionMandelbrotModel
+            {
+                SectionBitmap = new Bitmap(628, 348),
+                PointStartX = 628,
+                PointStartY = 348
+            };
 
-                    Complex c = new Complex(a, b);
-                    Complex z = new Complex(0, 0);
 
-                    int iterationsRun = CalculateMandelbrot(z, c, iterations);
 
-                    bm.SetPixel(x, y, GetColor(iterationsRun, iterations));
-                }
-            }
+            // Supply the state information required by the task.
+            ThreadWithState tws1 = new ThreadWithState(section1, iterations, widthDouble, heightDouble, scaleX, scaleY, aOffset, bOffset, new CallbackDelegate(ResultCallback));
+            ThreadWithState tws2 = new ThreadWithState(section2, iterations, widthDouble, heightDouble, scaleX, scaleY, aOffset, bOffset, new CallbackDelegate(ResultCallback));
+            ThreadWithState tws3 = new ThreadWithState(section3, iterations, widthDouble, heightDouble, scaleX, scaleY, aOffset, bOffset, new CallbackDelegate(ResultCallback));
+            ThreadWithState tws4 = new ThreadWithState(section4, iterations, widthDouble, heightDouble, scaleX, scaleY, aOffset, bOffset, new CallbackDelegate(ResultCallback));
+
+            // Create a thread to execute the task, and then
+            // start the thread.
+
+            //List<Thread> threads = new List<Thread>();
+            Thread thread1 = new Thread(new ThreadStart(tws1.ThreadProc));
+            Thread thread2 = new Thread(new ThreadStart(tws2.ThreadProc));
+            Thread thread3 = new Thread(new ThreadStart(tws3.ThreadProc));
+            Thread thread4 = new Thread(new ThreadStart(tws4.ThreadProc));
+
+            thread1.Start();
+            thread2.Start();
+            thread3.Start();
+            thread4.Start();
+
+            thread1.Join();
+            thread2.Join();
+            thread3.Join();
+            thread4.Join();
+
+
+            // Divide x, y coordinates into squares
+            // Generate threads for each square
+            // Wait for all threads to complete
+            // Iterate through data to generate final picture
+            AddResultsToImage(section1);
+            AddResultsToImage(section2);
+            AddResultsToImage(section3);
+            AddResultsToImage(section4);
+
 
             // Place Pixel at center of screen
             // bm.SetPixel(pictureBoxMandelbrot.Width / 2, pictureBoxMandelbrot.Height / 2, Color.White);
-            pictureBoxMandelbrot.Image = bm;
+            pictureBoxMandelbrot.Image = _bm;
         }
 
-        private int CalculateMandelbrot(Complex z, Complex c, int maxIterations)
-        {
-            int iteration = 0;
 
-            for (iteration = 0; iteration < maxIterations; iteration++)
+
+        public static void ResultCallback(SectionMandelbrotModel section)
+        {
+            //return new SectionModel
+            //{
+            //    Bm = bmSection,
+            //    XCoord = xStart,
+            //    YCoord = yStart
+            //};
+        }
+
+        public void AddResultsToImage(SectionMandelbrotModel section)
+        {
+            int pointX;
+            int pointY;
+
+            for (int x = 0; x < section.SectionBitmap.Width; x++) 
             {
-                z = Complex.Pow(z, 2) + c;
-                
-                if (z.Magnitude > 2)
+                pointX = x + section.PointStartX;
+
+                for (int y = 0; y < section.SectionBitmap.Height; y++)
                 {
-                    break;
+                    pointY = y + section.PointStartY;
+
+                    _bm.SetPixel(pointX, pointY, section.SectionBitmap.GetPixel(x, y));
                 }
-            }
-
-            return iteration;
-        }
-
-        private Color GetColor(int iterationsRun, int maxIterations)
-        {
-            if (iterationsRun == maxIterations)
-            {
-                return Color.Black;
-            }
-            else
-            {
-                double normalizedIterations = (double)(iterationsRun) / maxIterations;
-
-                int blueness = (int)(255 * normalizedIterations);
-
-                return Color.FromArgb(40, 10, blueness);
-                //return Color.FromArgb(blueness);
-                //return Color.White;
             }
         }
     }
