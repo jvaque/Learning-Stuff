@@ -58,25 +58,22 @@ namespace mandelbrot
             List<SectionMandelbrotModel> subsections = GenerateListOfSubsections(pictureBoxMandelbrot.Width, pictureBoxMandelbrot.Height);
 
             // Mention that for this use case the use of a delegate is not neccesary
-            // Change from using a dictionary to a list as we arent using the key-value pair just the value
-            Dictionary<string, Thread> threads = new Dictionary<string, Thread>();
+            List<Thread> threads = new();
 
-            int i = 1;
             foreach (var section in subsections)
             {
                 ThreadWithState tws = new ThreadWithState(section, iterations, widthDouble, heightDouble, scaleX, scaleY, aOffset, bOffset, new CallbackDelegate(ResultCallback));
-                threads.Add($"thread{i}", new Thread(new ThreadStart(tws.ThreadProc)));
-                i++;
+                threads.Add(new Thread(new ThreadStart(tws.ThreadProc)));
             }
 
-            foreach (var item in threads)
+            foreach (var thread in threads)
             {
-                item.Value.Start();
+                thread.Start();
             }
 
-            foreach (var item in threads)
+            foreach (var thread in threads)
             {
-                item.Value.Join();
+                thread.Join();
             }
 
             // Divide x, y coordinates into squares
