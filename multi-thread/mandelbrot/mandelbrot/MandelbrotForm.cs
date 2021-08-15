@@ -55,88 +55,95 @@ namespace mandelbrot
                 scaleX *= aspectRatio;
             }
 
+            List<SectionMandelbrotModel> subsections = GenerateListOfSubsections(pictureBoxMandelbrot.Width, pictureBoxMandelbrot.Height);
 
+            // Mention that for this use case the use of a delegate is not neccesary
+            // Change from using a dictionary to a list as we arent using the key-value pair just the value
+            Dictionary<string, Thread> threads = new Dictionary<string, Thread>();
 
-            //System.Drawing.Size(1256, 696); Copied from the Designer i think
-
-            SectionMandelbrotModel section1 = new SectionMandelbrotModel
+            int i = 1;
+            foreach (var section in subsections)
             {
-                SectionBitmap = new Bitmap(628, 348),
-                PointStartX = 0,
-                PointStartY = 0
-            };
-            SectionMandelbrotModel section2 = new SectionMandelbrotModel
+                ThreadWithState tws = new ThreadWithState(section, iterations, widthDouble, heightDouble, scaleX, scaleY, aOffset, bOffset, new CallbackDelegate(ResultCallback));
+                threads.Add($"thread{i}", new Thread(new ThreadStart(tws.ThreadProc)));
+                i++;
+            }
+
+            foreach (var item in threads)
             {
-                SectionBitmap = new Bitmap(628, 348),
-                PointStartX = 628,
-                PointStartY = 0
-            };
-            SectionMandelbrotModel section3 = new SectionMandelbrotModel
+                item.Value.Start();
+            }
+
+            foreach (var item in threads)
             {
-                SectionBitmap = new Bitmap(628, 348),
-                PointStartX = 0,
-                PointStartY = 348
-            };
-            SectionMandelbrotModel section4 = new SectionMandelbrotModel
-            {
-                SectionBitmap = new Bitmap(628, 348),
-                PointStartX = 628,
-                PointStartY = 348
-            };
-
-
-
-            // Supply the state information required by the task.
-            ThreadWithState tws1 = new ThreadWithState(section1, iterations, widthDouble, heightDouble, scaleX, scaleY, aOffset, bOffset, new CallbackDelegate(ResultCallback));
-            ThreadWithState tws2 = new ThreadWithState(section2, iterations, widthDouble, heightDouble, scaleX, scaleY, aOffset, bOffset, new CallbackDelegate(ResultCallback));
-            ThreadWithState tws3 = new ThreadWithState(section3, iterations, widthDouble, heightDouble, scaleX, scaleY, aOffset, bOffset, new CallbackDelegate(ResultCallback));
-            ThreadWithState tws4 = new ThreadWithState(section4, iterations, widthDouble, heightDouble, scaleX, scaleY, aOffset, bOffset, new CallbackDelegate(ResultCallback));
-
-            // Create a thread to execute the task, and then
-            // start the thread.
-
-            //List<Thread> threads = new List<Thread>();
-            Thread thread1 = new Thread(new ThreadStart(tws1.ThreadProc));
-            Thread thread2 = new Thread(new ThreadStart(tws2.ThreadProc));
-            Thread thread3 = new Thread(new ThreadStart(tws3.ThreadProc));
-            Thread thread4 = new Thread(new ThreadStart(tws4.ThreadProc));
-
-            thread1.Start();
-            thread2.Start();
-            thread3.Start();
-            thread4.Start();
-
-            thread1.Join();
-            thread2.Join();
-            thread3.Join();
-            thread4.Join();
-
+                item.Value.Join();
+            }
 
             // Divide x, y coordinates into squares
             // Generate threads for each square
             // Wait for all threads to complete
             // Iterate through data to generate final picture
-            AddResultsToImage(section1);
-            AddResultsToImage(section2);
-            AddResultsToImage(section3);
-            AddResultsToImage(section4);
-
+            foreach (var section in subsections)
+            {
+                AddResultsToImage(section);
+            }
 
             // Place Pixel at center of screen
             // bm.SetPixel(pictureBoxMandelbrot.Width / 2, pictureBoxMandelbrot.Height / 2, Color.White);
             pictureBoxMandelbrot.Image = _bm;
         }
 
+        private List<SectionMandelbrotModel> GenerateListOfSubsections(int width, int height)
+        {
+            int maxWidth = 200;
+            int maxHeight = 200;
+            List<SectionMandelbrotModel> subsections = new List<SectionMandelbrotModel>();
+
+            int bitmapWidth = maxWidth;
+            int bitmapHeight = maxHeight;
+
+            int posX = 0;
+            int posY = 0;
+
+            while (posY < height)
+            {
+                // test if out of bounds
+                if (posY + maxHeight > height)
+                {
+                    bitmapHeight = height - posY;
+                }
+                while (posX < width)
+                {
+                    // test if out of bounds
+                    if (posX + maxWidth > width)
+                    {
+                        bitmapWidth = width - posX;
+                    }
+
+                    // add model to list
+                    subsections.Add(new SectionMandelbrotModel
+                    {
+                        SectionBitmap = new Bitmap(bitmapWidth, bitmapHeight),
+                        PointStartX = posX,
+                        PointStartY = posY
+                    });
+
+                    posX += maxWidth;
+                }
+                bitmapWidth = maxWidth;
+                posX = 0;
+                posY += maxHeight;
+            }
+
+            return subsections;
+        }
+
+        int threadCount = Environment.ProcessorCount;
 
 
         public static void ResultCallback(SectionMandelbrotModel section)
         {
-            //return new SectionModel
-            //{
-            //    Bm = bmSection,
-            //    XCoord = xStart,
-            //    YCoord = yStart
-            //};
+            // For now we aren't doing anything in the callback method, and it could be removed
         }
 
         public void AddResultsToImage(SectionMandelbrotModel section)
