@@ -55,13 +55,15 @@ namespace mandelbrot
                 scaleX *= aspectRatio;
             }
 
+            // Divide x, y coordinates into squares
             List<SectionMandelbrotModel> subsections = GenerateListOfSubsections(pictureBoxMandelbrot.Width, pictureBoxMandelbrot.Height);
 
-            // Mention that for this use case the use of a delegate is not neccesary
             List<Thread> threads = new();
 
+            // Generate threads for each square
             foreach (var section in subsections)
             {
+                // Mention that for this use case the use of a delegate is not neccesary
                 ThreadWithState tws = new ThreadWithState(section, iterations, widthDouble, heightDouble, scaleX, scaleY, aOffset, bOffset, new CallbackDelegate(ResultCallback));
                 threads.Add(new Thread(new ThreadStart(tws.ThreadProc)));
             }
@@ -71,22 +73,18 @@ namespace mandelbrot
                 thread.Start();
             }
 
+            // Wait for all threads to complete
             foreach (var thread in threads)
             {
                 thread.Join();
             }
 
-            // Divide x, y coordinates into squares
-            // Generate threads for each square
-            // Wait for all threads to complete
             // Iterate through data to generate final picture
             foreach (var section in subsections)
             {
                 AddResultsToImage(section);
             }
 
-            // Place Pixel at center of screen
-            // bm.SetPixel(pictureBoxMandelbrot.Width / 2, pictureBoxMandelbrot.Height / 2, Color.White);
             pictureBoxMandelbrot.Image = _bm;
         }
 

@@ -11,11 +11,6 @@ namespace mandelbrot
     {
         // State information used in the task.
         private SectionMandelbrotModel _section;
-        //private Bitmap _bm;
-        //private int _xStart;
-        //private int _yStart;
-        //private int _width;
-        //private int _height;
         private int _iterations;
         private double _windowWidth;
         private double _windowHeight;
@@ -80,21 +75,10 @@ namespace mandelbrot
                 }
             }
 
-            //Console.WriteLine($"Finished processing for {_xStart}, {_yStart} with size {_width}, {_height}");
-
             if (_callbackDelegate != null)
             {
                 _callbackDelegate(_section);
             }
-
-            //return new SectionMandelbrotModel
-            //{
-            //    image = bm,
-            //    x = xStart,
-            //    y = yStart,
-            //    width = width,
-            //    height = height
-            //};
         }
         private int CalculateMandelbrot(Complex z, Complex c, int maxIterations)
         {
