@@ -33,6 +33,9 @@ export function loadShader(gl, shaderScript, shaderType) {
     return shader;
 }
 
+/*
+  Creates the WebGL context for the canvas, returning said context
+*/
 export function createGLContext(canvas) {
     var names = ["webgl", "experimental-webgl"];
     var context = null;
@@ -172,6 +175,59 @@ export function addCubeVertexTextureCoordinateBuffers(gl) {
         1.0, 1.0, //v7
         1.0, 0.0, //v6
         0.0, 0.0  //v2
+    ];
+
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoodinates), gl.STATIC_DRAW);
+
+    return {
+        Buffer: cubeVertexTextureCoordinateBuffer,
+        BUF_ITEM_SIZE: 2,
+        BUF_NUM_ITEMS: 24,
+    }
+}
+
+export function addCubeVertexTextureCoordinateBuffersUniqueSides(gl) {
+    // Setup buffer with texture coordinates
+    const cubeVertexTextureCoordinateBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexTextureCoordinateBuffer);
+
+    // Think about how the coordinates are asigned. Ref. vertex coords.
+    var textureCoodinates = [
+        // Front face
+        0.0, 0.5, //v0
+        1/3, 0.5, //v1
+        1/3, 1.0, //v2
+        0.0, 1.0, //v3
+
+        // Back face
+        1/3, 1.0, //v4
+        2/3, 1.0, //v5
+        2/3, 0.5, //v6
+        1/3, 0.5, //v7
+
+        // Left face
+        2/3, 1.0, //v1
+        1.0, 1.0, //v5
+        1.0, 0.5, //v6
+        2/3, 0.5, //v2
+
+        // Right face
+        0.0, 0.5, //v0
+        1/3, 0.5, //v3
+        1/3, 0.0, //v7
+        0.0, 0.0, //v4
+
+        // Top face
+        1/3, 0.5, //v0
+        2/3, 0.5, //v4
+        2/3, 0.0, //v5
+        1/3, 0.0, //v1
+
+        // Bottom face
+        2/3, 0.5, //v3
+        1.0, 0.5, //v7
+        1.0, 0.0, //v6
+        2/3, 0.0  //v2
     ];
 
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoodinates), gl.STATIC_DRAW);

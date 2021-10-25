@@ -8,7 +8,7 @@ var canvas;
 import vertexShaderGLSL from '/shaders/vertex-shader.glsl.js';
 import fragmentShaderGLSL from '/shaders/fragment-shader.glsl.js';
 
-// import * as glUtils from '/js/glUtils.js';
+import * as glUtils from '/js/glUtils.js';
 
 // Variables for translations and rotations
 var transX = 0;
@@ -37,74 +37,10 @@ function setInclination(angle) {
   pwgl.orbitInclination = angle * (Math.PI/180);
 }
 
-/*
-  Creates the WebGL context for the canvas, returning said context
-*/
-function createGLContext(canvas) {
-  var names = ["webgl", "experimental-webgl"];
-  var context = null;
-  for (var i = 0; i < names.length; i++) {
-    try {
-      context = canvas.getContext(names[i]);
-    } catch (e) {}
-    if (context) {
-        break;
-      }
-  }
-  if (context) {
-    context.viewportWidth = canvas.width;
-    context.viewportHeight = canvas.height;
-  } else {
-    alert("Failed to create WebGL context!");
-  }
-  return context;
-}
-
-function loadShader(shaderScript, shaderType) {
-  // var shaderScript = document.getElementById(id);
-  // If we dont find an element with the specified id
-  // we do and early exit
-  if (!shaderScript) {
-    return null;
-  }
-  // // Otherwise loop though the clildren for the found DOM element and
-  // // build up the shader source code as a string
-  // var shaderSource = "";
-  // var currentChild = shaderScript.firstChild;
-  // while (currentChild) {
-  //   if (currentChild.nodeType == 3) {
-  //     // 3 corresponds to TEXT_NODE
-  //     shaderSource += currentChild.textContent;
-  //   }
-  //   currentChild =currentChild.nextSibling;
-  // }
-  // Create a WebGL shader object according to type of shader, i.e.,
-  // vertex or fragment shader.
-  var shader;
-  if (shaderType == "x-shader/x-fragment") {
-    shader = gl.createShader(gl.FRAGMENT_SHADER);
-  } else if (shaderType == "x-shader/x-vertex") {
-    shader = gl.createShader(gl.VERTEX_SHADER);
-  } else {
-    return null;
-  }
-
-  gl.shaderSource(shader, shaderScript);
-  gl.compileShader(shader);
-
-  // Check compiling status
-  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS) && !gl.isContextLost()) {
-    alert("Compiler!!!!!!!!")
-    alert(gl.getShaderInfoLog(shader));
-    return null;
-  }
-  return shader;
-}
-
 function setupShaders() {
   // Create vertex and fragment shaders
-  var vertexShader = loadShader(vertexShaderGLSL, "x-shader/x-vertex");
-  var fragmentShader = loadShader(fragmentShaderGLSL, "x-shader/x-fragment");
+  var vertexShader = glUtils.loadShader(gl, vertexShaderGLSL, "x-shader/x-vertex");
+  var fragmentShader = glUtils.loadShader(gl, fragmentShaderGLSL, "x-shader/x-fragment");
 
   // Create a WebGL program object
   var shaderProgram = gl.createProgram();
@@ -407,162 +343,17 @@ function setupDishBuffers() {
 // -----------------------------------------------------------------------------
 
 function setupCubeBuffers() {
-  pwgl.cubeVertexPositionBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, pwgl.cubeVertexPositionBuffer);
+  pwgl.CUBE = {};
 
-  var cubeVertexPosition = [
-    // Front face
-     1.0,  1.0,  1.0, //v0
-    -1.0,  1.0,  1.0, //v1
-    -1.0, -1.0,  1.0, //v2
-     1.0, -1.0,  1.0, //v3
+  pwgl.CUBE.VERTEX_POS = glUtils.addCubeVertexPositionBuffers(gl);
 
-     // Back face
-     1.0,  1.0, -1.0, //v4
-    -1.0,  1.0, -1.0, //v5
-    -1.0, -1.0, -1.0, //v6
-     1.0, -1.0, -1.0, //v7
+  pwgl.CUBE.VERTEX_INDEX = glUtils.addCubeVertexIndexBuffers(gl);
 
-     // Left face
-    -1.0,  1.0,  1.0, //v8
-    -1.0,  1.0, -1.0, //v9
-    -1.0, -1.0, -1.0, //v10
-    -1.0, -1.0,  1.0, //v11
+  // pwgl.CUBE.VERTEX_TEX_COORD = glUtils.addCubeVertexTextureCoordinateBuffers(gl);
+  pwgl.CUBE.VERTEX_TEX_COORD = glUtils.addCubeVertexTextureCoordinateBuffersUniqueSides(gl);
 
-     // Right face
-     1.0,  1.0,  1.0, //v12
-     1.0, -1.0,  1.0, //v13
-     1.0, -1.0, -1.0, //v14
-     1.0,  1.0, -1.0, //v15
+  pwgl.CUBE.VERTEX_NORMAL = glUtils.addCubeVertexNormalBuffers(gl);
 
-     // Top face
-     1.0,  1.0,  1.0, //v16
-     1.0,  1.0, -1.0, //v17
-    -1.0,  1.0, -1.0, //v18
-    -1.0,  1.0,  1.0, //v19
-
-    // Bottom face
-     1.0, -1.0,  1.0, //v20
-     1.0, -1.0, -1.0, //v21
-    -1.0, -1.0, -1.0, //v22
-    -1.0, -1.0,  1.0, //v23
-  ];
-
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(cubeVertexPosition), gl.STATIC_DRAW);
-
-  pwgl.CUBE_VERTEX_POS_BUF_ITEM_SIZE = 3;
-  pwgl.CUBE_VERTEX_POS_BUF_NUM_ITEMS = 24;
-
-  pwgl.cubeVertexIndexBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, pwgl.cubeVertexIndexBuffer);
-
-  // For simplicity, each face will be drawn as gl.TRIANGLES, therefore
-  // the indices for each triangle are specified.
-  var cubeVertexIndices = [
-     0,  1,  2,    0,  2,  3,    // Front face
-     4,  6,  5,    4,  7,  6,    // Back face
-     8,  9, 10,    8, 10, 11,    // Left face
-    12, 13, 14,   12, 14, 15,    // Right face
-    16, 17, 18,   16, 18, 19,    // Top face
-    20, 22, 21,   20, 23, 22     // Bottom face
-  ];
-
-  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(cubeVertexIndices), gl.STATIC_DRAW);
-  pwgl.CUBE_VERTEX_INDEX_BUF_ITEM_SIZE = 1;
-  pwgl.CUBE_VERTEX_INDEX_BUF_NUM_ITEMS = 36;
-
-  // Setup buffer with texture coordinates
-  pwgl.cubeVertexTextureCoordinateBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, pwgl.cubeVertexTextureCoordinateBuffer);
-
-  // Think about how the coordinates are asigned. Ref. vertex coords.
-  var textureCoodinates = [
-    // Front face
-    0.0, 0.5, //v0
-    1/3, 0.5, //v1
-    1/3, 1.0, //v2
-    0.0, 1.0, //v3
-
-    // Back face
-    1/3, 1.0, //v4
-    2/3, 1.0, //v5
-    2/3, 0.5, //v6
-    1/3, 0.5, //v7
-
-    // Left face
-    2/3, 1.0, //v1
-    1.0, 1.0, //v5
-    1.0, 0.5, //v6
-    2/3, 0.5, //v2
-
-    // Right face
-    0.0, 0.5, //v0
-    1/3, 0.5, //v3
-    1/3, 0.0, //v7
-    0.0, 0.0, //v4
-
-    // Top face
-    1/3, 0.5, //v0
-    2/3, 0.5, //v4
-    2/3, 0.0, //v5
-    1/3, 0.0, //v1
-
-    // Bottom face
-    2/3, 0.5, //v3
-    1.0, 0.5, //v7
-    1.0, 0.0, //v6
-    2/3, 0.0  //v2
-  ];
-
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoodinates), gl.STATIC_DRAW);
-  pwgl.CUBE_VERTEX_TEX_COORD_BUF_ITEM_SIZE = 2;
-  pwgl.CUBE_VERTEX_TEX_COORD_BUF_NUM_ITEMS = 24;
-
-  // Setup normal buffer for lighting calculations
-  pwgl.cubeVertexNormalBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, pwgl.cubeVertexNormalBuffer);
-
-  var cubeVertexNormals = [
-    // Front face
-     0.0,  0.0,  1.0, //v0
-     0.0,  0.0,  1.0, //v1
-     0.0,  0.0,  1.0, //v2
-     0.0,  0.0,  1.0, //v3
-
-    // Back face
-     0.0,  0.0, -1.0, //v4
-     0.0,  0.0, -1.0, //v5
-     0.0,  0.0, -1.0, //v6
-     0.0,  0.0, -1.0, //v7
-
-    // Left face
-    -1.0,  0.0,  0.0, //v1
-    -1.0,  0.0,  0.0, //v5
-    -1.0,  0.0,  0.0, //v6
-    -1.0,  0.0,  0.0, //v2
-
-    // Right face
-     1.0,  0.0,  0.0, //v0
-     1.0,  0.0,  0.0, //v3
-     1.0,  0.0,  0.0, //v7
-     1.0,  0.0,  0.0, //v4
-
-    // Top face
-     0.0,  1.0,  0.0, //v0
-     0.0,  1.0,  0.0, //v4
-     0.0,  1.0,  0.0, //v5
-     0.0,  1.0,  0.0, //v1
-
-    // Bottom face
-     0.0, -1.0,  0.0, //v3
-     0.0, -1.0,  0.0, //v7
-     0.0, -1.0,  0.0, //v6
-     0.0, -1.0,  0.0, //v2
-  ];
-
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(cubeVertexNormals), gl.STATIC_DRAW);
-  pwgl.CUBE_VERTEX_NORMAL_BUF_ITEM_SIZE = 3;
-  pwgl.CUBE_VERTEX_NORMAL_BUF_NUM_ITEMS = 24;
 }
 
 function setupLights() {
@@ -716,26 +507,26 @@ function drawDish(texture) {
 
 // -----------------------------------------------------------------------------
 function drawCube(texture) {
-  gl.bindBuffer(gl.ARRAY_BUFFER, pwgl.cubeVertexPositionBuffer);
+  gl.bindBuffer(gl.ARRAY_BUFFER, pwgl.CUBE.VERTEX_POS.Buffer);
   gl.vertexAttribPointer(pwgl.vertexPositionAttributeLoc,
-                         pwgl.CUBE_VERTEX_POS_BUF_ITEM_SIZE,
+                         pwgl.CUBE.VERTEX_POS.BUF_ITEM_SIZE,
                          gl.FLOAT, false, 0, 0);
 
-  gl.bindBuffer(gl.ARRAY_BUFFER, pwgl.cubeVertexNormalBuffer);
+  gl.bindBuffer(gl.ARRAY_BUFFER, pwgl.CUBE.VERTEX_NORMAL.Buffer);
   gl.vertexAttribPointer(pwgl.vertexNormalAttributeLoc,
-                          pwgl.CUBE_VERTEX_NORMAL_BUF_ITEM_SIZE,
+                          pwgl.CUBE.VERTEX_NORMAL.BUF_ITEM_SIZE,
                           gl.FLOAT, false, 0, 0);
 
-  gl.bindBuffer(gl.ARRAY_BUFFER, pwgl.cubeVertexTextureCoordinateBuffer);
+  gl.bindBuffer(gl.ARRAY_BUFFER, pwgl.CUBE.VERTEX_TEX_COORD.Buffer);
   gl.vertexAttribPointer(pwgl.vertexTextureAttributeLoc,
-                         pwgl.CUBE_VERTEX_TEX_COORD_BUF_ITEM_SIZE,
+                         pwgl.CUBE.VERTEX_TEX_COORD.BUF_ITEM_SIZE,
                          gl.FLOAT, false, 0, 0);
 
   gl.activeTexture(gl.TEXTURE0);
   gl.bindTexture(gl.TEXTURE_2D, texture);
 
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, pwgl.cubeVertexIndexBuffer);
-  gl.drawElements(gl.TRIANGLES, pwgl.CUBE_VERTEX_INDEX_BUF_NUM_ITEMS,
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, pwgl.CUBE.VERTEX_INDEX.Buffer);
+  gl.drawElements(gl.TRIANGLES, pwgl.CUBE.VERTEX_INDEX.BUF_NUM_ITEMS,
     gl.UNSIGNED_SHORT, 0);
 }
 
@@ -1014,7 +805,7 @@ function startup() {
   canvas.addEventListener('mousewheel', wheelHandler, false);
   canvas.addEventListener('DOMMouseScroll', wheelHandler, false);
 
-  gl = createGLContext(canvas);
+  gl = glUtils.createGLContext(canvas);
 
   init();
 
