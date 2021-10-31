@@ -58,6 +58,47 @@ export function createGLContext(canvas) {
     return context;
 }
 
+export function addSphereVertexPositionBuffers(gl, sphereParams) {
+    // Set sphere vertex position buffers
+    const sphereVertexPositionBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, sphereVertexPositionBuffer);
+
+    var sphereVertexPosition = [];
+
+    var parallelAngle = 0;
+    var meridianAngle = 0;
+    var x = 0;
+    var y = 0;
+    var z = 0;
+
+    // radius is temp to see if it breaks stuff
+    for (var i = 0; i <= sphereParams.numParallels; i++) {
+        parallelAngle = i * 2 * Math.PI / sphereParams.numParallels;
+        for (var j = 0; j <= sphereParams.numMeridians; j++) {
+            meridianAngle = j * Math.PI / sphereParams.numMeridians;
+            // x coordinate for the parallel
+            x = Math.sin(meridianAngle) * Math.cos(parallelAngle);
+            // y coordinate for the parallel
+            y = Math.cos(meridianAngle);
+            // z coordinate for the parallel
+            z = Math.sin(meridianAngle) * Math.sin(parallelAngle);
+
+            // push to the vertex position array
+            sphereVertexPosition.push(x);
+            sphereVertexPosition.push(y);
+            sphereVertexPosition.push(z);
+        }
+    }
+
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(sphereVertexPosition), gl.STATIC_DRAW);
+
+    return {
+        Buffer: sphereVertexPositionBuffer,
+        BUF_ITEM_SIZE: 3,
+        BUF_NUM_ITEMS: sphereVertexPosition.length
+    };
+}
+
 export function addCubeVertexPositionBuffers(gl) {
     const cubeVertexPositionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexPositionBuffer);

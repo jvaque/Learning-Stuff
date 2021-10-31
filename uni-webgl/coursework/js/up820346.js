@@ -96,42 +96,27 @@ function popModelViewMatrix() {
 // -----------------------------------------------------------------------------
 function setupSphereBuffers() {
   // Sphere attributes
-  var radius = 10; //Must be 10 for the coursework
-  var numberOfParallels = 200;
-  var numberOfMeridians = 150;
-
-  // Set sphere vertex position buffers
-  pwgl.sphereVertexPositionBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, pwgl.sphereVertexPositionBuffer);
-
-  var sphereVertexPosition = [];
-  var parallelAngle = 0;
-  var meridianAngle = 0;
-  var x = 0;
-  var y = 0;
-  var z = 0;
-
-  for (var i = 0; i <= numberOfParallels; i++) {
-    parallelAngle = i * 2 * Math.PI / numberOfParallels;
-    for (var j = 0; j <= numberOfMeridians; j++) {
-      meridianAngle = j * Math.PI / numberOfMeridians;
-      // x coordinate for the parallel
-      x = radius * Math.sin(meridianAngle) * Math.cos(parallelAngle);
-      // y coordinate for the parallel
-      y = radius * Math.cos(meridianAngle);
-      // z coordinate for the parallel
-      z = radius * Math.sin(meridianAngle) * Math.sin(parallelAngle);
-
-      // push to the vertex position array
-      sphereVertexPosition.push(x);
-      sphereVertexPosition.push(y);
-      sphereVertexPosition.push(z);
-    }
+  var sphereParams = {
+    numParallels: 200,
+    numMeridians: 150
   }
 
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(sphereVertexPosition), gl.STATIC_DRAW);
-  pwgl.SPHERE_VERTEX_POS_BUF_ITEM_SIZE = 3;
-  pwgl.SPHERE_VERTEX_POS_BUF_NUM_ITEMS = sphereVertexPosition.length
+  // Will have to transform the created sphere so that it has a radius of 10 units as
+  // addSphereVertexPositionBuffers only creates a unit sphere.
+  
+  var numberOfParallels = 200; // temp as it would break some stuff
+  var numberOfMeridians = 150; // temp as it would break some stuff
+
+  var parallelAngle = 0; // temp as it would break some stuff
+  var meridianAngle = 0; // temp as it would break some stuff
+  var x = 0; // temp as it would break some stuff
+  var y = 0; // temp as it would break some stuff
+  var z = 0; // temp as it would break some stuff
+
+  pwgl.SPHERE = {};
+
+  pwgl.SPHERE.VERTEX_POS = glUtils.addSphereVertexPositionBuffers(gl, sphereParams);
+
 
   // Set sphere vertex indices buffers
   pwgl.sphereVertexIndexBuffer = gl.createBuffer();
@@ -353,7 +338,6 @@ function setupCubeBuffers() {
   pwgl.CUBE.VERTEX_TEX_COORD = glUtils.addCubeVertexTextureCoordinateBuffersUniqueSides(gl);
 
   pwgl.CUBE.VERTEX_NORMAL = glUtils.addCubeVertexNormalBuffers(gl);
-
 }
 
 function setupLights() {
@@ -456,9 +440,9 @@ function drawFloor() {
 // -----------------------------------------------------------------------------
 function drawSphere(texture) {
   // Draw the sphere
-  gl.bindBuffer(gl.ARRAY_BUFFER, pwgl.sphereVertexPositionBuffer);
+  gl.bindBuffer(gl.ARRAY_BUFFER, pwgl.SPHERE.VERTEX_POS.Buffer);
   gl.vertexAttribPointer(pwgl.vertexPositionAttributeLoc,
-                         pwgl.SPHERE_VERTEX_POS_BUF_ITEM_SIZE,
+                         pwgl.SPHERE.VERTEX_POS.BUF_ITEM_SIZE,
                          gl.FLOAT, false, 0, 0);
 
   gl.bindBuffer(gl.ARRAY_BUFFER, pwgl.sphereVertexNormalBuffer);
@@ -528,6 +512,15 @@ function drawCube(texture) {
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, pwgl.CUBE.VERTEX_INDEX.Buffer);
   gl.drawElements(gl.TRIANGLES, pwgl.CUBE.VERTEX_INDEX.BUF_NUM_ITEMS,
     gl.UNSIGNED_SHORT, 0);
+}
+
+function drawEarth() {
+  pushModelViewMatrix();
+  // Sphere radius must be 10 units for coursework
+  mat4.scale(pwgl.modelViewMatrix, [10, 10, 10], pwgl.modelViewMatrix);
+  uploadModelViewMatrixToShader();
+  drawSphere(pwgl.sphereTexture);
+  popModelViewMatrix();
 }
 
 function drawSatelite() {
@@ -672,7 +665,7 @@ function draw() {
   mat4.rotateY(pwgl.modelViewMatrix, -pwgl.earthAngle, pwgl.modelViewMatrix);
   uploadModelViewMatrixToShader();
   uploadNormalMatrixToShader();
-  drawSphere(pwgl.sphereTexture);
+  drawEarth();
   popModelViewMatrix();
 
   // // Draw Satelite (just to get the elements of in in place)
