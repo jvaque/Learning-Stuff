@@ -103,103 +103,16 @@ function setupSphereBuffers() {
 
   // Will have to transform the created sphere so that it has a radius of 10 units as
   // addSphereVertexPositionBuffers only creates a unit sphere.
-  
-  var numberOfParallels = 200; // temp as it would break some stuff
-  var numberOfMeridians = 150; // temp as it would break some stuff
-
-  var parallelAngle = 0; // temp as it would break some stuff
-  var meridianAngle = 0; // temp as it would break some stuff
-  var x = 0; // temp as it would break some stuff
-  var y = 0; // temp as it would break some stuff
-  var z = 0; // temp as it would break some stuff
 
   pwgl.SPHERE = {};
 
   pwgl.SPHERE.VERTEX_POS = glUtils.addSphereVertexPositionBuffers(gl, sphereParams);
 
+  pwgl.SPHERE.VERTEX_INDEX = glUtils.addSphereVertexIndexBuffers(gl, sphereParams);
 
-  // Set sphere vertex indices buffers
-  pwgl.sphereVertexIndexBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, pwgl.sphereVertexIndexBuffer);
+  pwgl.SPHERE.VERTEX_TEX_COORD = glUtils.addSphereVertexTextureCoordinateBuffers(gl, sphereParams);
 
-  var sphereVertexIndices = [];
-  var v1 = 0;
-  var v2 = 0;
-  var v3 = 0;
-  var v4 = 0;
-
-  for (var i=0; i < numberOfParallels; i++) {
-    for (var j=0; j < numberOfMeridians; j++) {
-      v1 = i*(numberOfMeridians+1) + j;//index of vi,j
-      v2 = v1 + 1;                     //index of vi,j+1
-		  v3 = v1 + numberOfMeridians + 1; //index of vi+1,j
-      v4 = v3 + 1;                     //index of vi+1,j+1
-
-		  // indices of first triangle
-		  sphereVertexIndices.push(v1);
-		  sphereVertexIndices.push(v2);
-		  sphereVertexIndices.push(v3);
-		  // indices of second triangle
-		  sphereVertexIndices.push(v3);
-		  sphereVertexIndices.push(v2);
-		  sphereVertexIndices.push(v4);
-	  }
-  }
-
-  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(sphereVertexIndices), gl.STATIC_DRAW);
-  pwgl.SPHERE_VERTEX_INDEX_BUF_ITEM_SIZE = 1;
-  pwgl.SPHERE_VERTEX_INDEX_BUF_NUM_ITEMS = sphereVertexIndices.length;
-
-  // Set sphere vertex texture coordinates buffer
-  pwgl.sphereVertexTextureCoordinateBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, pwgl.sphereVertexTextureCoordinateBuffer);
-
-  var sphereVertexTextureCoodinates = [];
-  var texX = 0.0;
-  var texY = 0.0;
-  var incrementParallel = 1/numberOfParallels;
-  var incrementMeridian = 1/numberOfMeridians;
-
-  for (var i=0; i <= numberOfParallels; i++) {
-    texX = 1 - (i * incrementParallel);
-    for (var j=0; j <= numberOfMeridians; j++) {
-      texY = 1 - (j * incrementMeridian);
-      // push calculated values into the stack
-      sphereVertexTextureCoodinates.push(texX, texY);
-    }
-  }
-
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(sphereVertexTextureCoodinates), gl.STATIC_DRAW);
-  pwgl.SPHERE_VERTEX_TEX_COORD_BUF_ITEM_SIZE = 2;
-  pwgl.SPHERE_VERTEX_TEX_COORD_BUF_NUM_ITEMS = sphereVertexTextureCoodinates.length;
-
-  // Set sphere vertex normals coordinates buffer
-  pwgl.sphereVertexNormalBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, pwgl.sphereVertexNormalBuffer);
-
-  var sphereVertexNormals = [];
-
-  for (var i = 0; i <= numberOfParallels; i++) {
-    parallelAngle = i * 2 * Math.PI / numberOfParallels;
-    for (var j = 0; j <= numberOfMeridians; j++) {
-      meridianAngle = j * Math.PI / numberOfMeridians;
-      // x coordinate for the parallel
-      x = Math.sin(meridianAngle) * Math.cos(parallelAngle);
-      // y coordinate for the parallel
-      y = Math.cos(meridianAngle);
-      // z coordinate for the parallel
-      z = Math.sin(meridianAngle) * Math.sin(parallelAngle);
-
-      // push to the vertex position array
-      sphereVertexNormals.push(x);
-      sphereVertexNormals.push(y);
-      sphereVertexNormals.push(z);
-    }
-  }
-
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(sphereVertexNormals), gl.STATIC_DRAW);
-  pwgl.SPHERE_VERTEX_NORMAL_BUF_ITEM_SIZE = 3;
-  pwgl.SPHERE_VERTEX_NORMAL_BUF_NUM_ITEMS = sphereVertexNormals.length;
+  pwgl.SPHERE.VERTEX_NORMAL = glUtils.addSphereVertexNormalBuffers(gl, sphereParams);
 }
 
 // -----------------------------------------------------------------------------
@@ -445,21 +358,21 @@ function drawSphere(texture) {
                          pwgl.SPHERE.VERTEX_POS.BUF_ITEM_SIZE,
                          gl.FLOAT, false, 0, 0);
 
-  gl.bindBuffer(gl.ARRAY_BUFFER, pwgl.sphereVertexNormalBuffer);
+  gl.bindBuffer(gl.ARRAY_BUFFER, pwgl.SPHERE.VERTEX_NORMAL.Buffer);
   gl.vertexAttribPointer(pwgl.vertexNormalAttributeLoc,
-                        pwgl.SPHERE_VERTEX_NORMAL_BUF_ITEM_SIZE,
+                        pwgl.SPHERE.VERTEX_NORMAL.BUF_ITEM_SIZE,
                         gl.FLOAT, false, 0, 0);
 
-  gl.bindBuffer(gl.ARRAY_BUFFER, pwgl.sphereVertexTextureCoordinateBuffer);
+  gl.bindBuffer(gl.ARRAY_BUFFER, pwgl.SPHERE.VERTEX_TEX_COORD.Buffer);
   gl.vertexAttribPointer(pwgl.vertexTextureAttributeLoc,
-                         pwgl.SPHERE_VERTEX_TEX_COORD_BUF_ITEM_SIZE,
+                         pwgl.SPHERE.VERTEX_TEX_COORD.BUF_ITEM_SIZE,
                          gl.FLOAT, false, 0, 0);
 
   gl.activeTexture(gl.TEXTURE0);
   gl.bindTexture(gl.TEXTURE_2D, texture);
 
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, pwgl.sphereVertexIndexBuffer);
-  gl.drawElements(gl.TRIANGLES, pwgl.SPHERE_VERTEX_INDEX_BUF_NUM_ITEMS,
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, pwgl.SPHERE.VERTEX_INDEX.Buffer);
+  gl.drawElements(gl.TRIANGLES, pwgl.SPHERE.VERTEX_INDEX.BUF_NUM_ITEMS,
     gl.UNSIGNED_SHORT, 0);
 }
 
