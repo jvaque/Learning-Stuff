@@ -6,7 +6,7 @@ var vertexBuffer;
 
 // Import shaders
 import vertexShaderGLSL from '/shaders/vertex-shader-unknown-v5.glsl.js';
-import fragmentShaderGLSL from '/shaders/fragment-shader-basic-v4.glsl.js';
+import fragmentShaderGLSL from '/shaders/fragment-shader-static-color.glsl.js';
 
 import * as glUtils from '/js/glUtils.js';
 

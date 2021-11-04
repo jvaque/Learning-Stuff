@@ -14,7 +14,7 @@ var modelViewMatrixStack;
 
 // Import shaders
 import vertexShaderGLSL from '/shaders/vertex-shader-unknown-v3.glsl.js';
-import fragmentShaderGLSL from '/shaders/fragment-shader-basic-v3.glsl.js';
+import fragmentShaderGLSL from '/shaders/fragment-shader-uniform-color.glsl.js';
 
 import * as glUtils from '/js/glUtils.js';
 
