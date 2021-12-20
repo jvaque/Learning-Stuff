@@ -505,7 +505,7 @@ function setupTextures() {
 
   // Texture for the body of the satelite
   pwgl.sateliteTexture = gl.createTexture();
-  loadImageForTexture("textures/satelite_body2.jpg", pwgl.sateliteTexture);
+  loadImageForTexture("textures/satelite_body.jpg", pwgl.sateliteTexture);
 
   // not used at the moment because it uses goldenTexture
   // // Texture for the satelite dish
