@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -20,7 +21,29 @@ namespace mandelbrot
             InitializeComponent();
         }
 
-        private void MandelbrotForm_Shown(object sender, EventArgs e)
+        private void buttonStart_Click(object sender, EventArgs e)
+        {
+            buttonStart.Enabled = false;
+
+            if (buttonStart.Text == "Start")
+            {
+                buttonStart.Text = "Running";
+
+                pictureBoxMandelbrot.Image = CalculateMandelbrot();
+
+                buttonStart.Text = "Clear";
+            }
+            else
+            {
+                pictureBoxMandelbrot.Image = null;
+
+                buttonStart.Text = "Start";
+            }
+            
+            buttonStart.Enabled = true;
+        }
+
+        private Bitmap CalculateMandelbrot()
         {
             _bm = new Bitmap(pictureBoxMandelbrot.Width, pictureBoxMandelbrot.Height);
 
@@ -85,7 +108,7 @@ namespace mandelbrot
                 AddResultsToImage(section);
             }
 
-            pictureBoxMandelbrot.Image = _bm;
+            return _bm;
         }
 
         private List<SectionMandelbrotModel> GenerateListOfSubsections(int width, int height)
@@ -156,6 +179,28 @@ namespace mandelbrot
 
                     _bm.SetPixel(pointX, pointY, section.SectionBitmap.GetPixel(x, y));
                 }
+            }
+        }
+
+        private void buttonSaveImage_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.FileName = $"Mandelbrot_{DateTime.Now:yyyy-MM-dd_HHmmss}.png";
+            sfd.Filter = "PNG Image(*.png)|*.png|JPG Image(*.jpg)|*.jpg|BMP Image(*.bmp)|*.bmp";
+            ImageFormat format = ImageFormat.Png;
+            if (sfd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                string ext = System.IO.Path.GetExtension(sfd.FileName);
+                switch (ext)
+                {
+                    case ".jpg":
+                        format = ImageFormat.Jpeg;
+                        break;
+                    case ".bmp":
+                        format = ImageFormat.Bmp;
+                        break;
+                }
+                pictureBoxMandelbrot.Image.Save(sfd.FileName, format);
             }
         }
     }
