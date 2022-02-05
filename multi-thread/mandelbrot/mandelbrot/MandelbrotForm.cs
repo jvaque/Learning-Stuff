@@ -15,6 +15,9 @@ namespace mandelbrot
     public partial class MandelbrotForm : Form
     {
         private Bitmap _bm;
+        //private MandelbrotGenerator _mbGenerator = new(1920, 1080);
+        private MandelbrotGenerator _mbGenerator = new(3840, 2160);
+        //private MandelbrotGenerator _mbGenerator = new(16000,9000);
 
         public MandelbrotForm()
         {
@@ -29,7 +32,7 @@ namespace mandelbrot
             {
                 buttonStart.Text = "Running";
 
-                pictureBoxMandelbrot.Image = CalculateMandelbrot();
+                pictureBoxMandelbrot.Image = _mbGenerator.Calculate();
 
                 buttonStart.Text = "Clear";
             }
@@ -43,144 +46,7 @@ namespace mandelbrot
             buttonStart.Enabled = true;
         }
 
-        private Bitmap CalculateMandelbrot()
-        {
-            _bm = new Bitmap(pictureBoxMandelbrot.Width, pictureBoxMandelbrot.Height);
-
-            double widthDouble = pictureBoxMandelbrot.Width;
-            double heightDouble = pictureBoxMandelbrot.Height;
-
-            // double aOffset = 0;
-            // double bOffset = 0;
-            // double aOffset = 0.2599;
-            // double bOffset = 0.0015;
-            // double aOffset = -0.75;
-            // double bOffset = 0.015;
-            // double aOffset = -1.315180982097868;
-            // double bOffset = 0.073481649996795;
-            double aOffset = -0.761574;
-            double bOffset = -0.0847596;
-
-            double scale = 0.001;
-            double scaleX = scale;
-            double scaleY = scale;
-
-            int iterations = 255;
-
-            double aspectRatio = widthDouble / heightDouble;
-
-            if (aspectRatio > 1d)
-            {
-                scaleY /= aspectRatio;
-            }
-            else
-            {
-                scaleX *= aspectRatio;
-            }
-
-            // Divide x, y coordinates into squares
-            List<SectionMandelbrotModel> subsections = GenerateListOfSubsections(pictureBoxMandelbrot.Width, pictureBoxMandelbrot.Height);
-
-            List<Thread> threads = new();
-
-            // Generate threads for each square
-            foreach (var section in subsections)
-            {
-                // Mention that for this use case the use of a delegate is not neccesary
-                ThreadWithState tws = new ThreadWithState(section, iterations, widthDouble, heightDouble, scaleX, scaleY, aOffset, bOffset, new CallbackDelegate(ResultCallback));
-                threads.Add(new Thread(new ThreadStart(tws.ThreadProc)));
-            }
-
-            foreach (var thread in threads)
-            {
-                thread.Start();
-            }
-
-            // Wait for all threads to complete
-            foreach (var thread in threads)
-            {
-                thread.Join();
-            }
-
-            // Iterate through data to generate final picture
-            foreach (var section in subsections)
-            {
-                AddResultsToImage(section);
-            }
-
-            return _bm;
-        }
-
-        private List<SectionMandelbrotModel> GenerateListOfSubsections(int width, int height)
-        {
-            int maxWidth = 200;
-            int maxHeight = 200;
-            List<SectionMandelbrotModel> subsections = new List<SectionMandelbrotModel>();
-
-            int bitmapWidth = maxWidth;
-            int bitmapHeight = maxHeight;
-
-            int posX = 0;
-            int posY = 0;
-
-            while (posY < height)
-            {
-                // test if out of bounds
-                if (posY + maxHeight > height)
-                {
-                    bitmapHeight = height - posY;
-                }
-                while (posX < width)
-                {
-                    // test if out of bounds
-                    if (posX + maxWidth > width)
-                    {
-                        bitmapWidth = width - posX;
-                    }
-
-                    // add model to list
-                    subsections.Add(new SectionMandelbrotModel
-                    {
-                        SectionBitmap = new Bitmap(bitmapWidth, bitmapHeight),
-                        PointStartX = posX,
-                        PointStartY = posY
-                    });
-
-                    posX += maxWidth;
-                }
-                bitmapWidth = maxWidth;
-                posX = 0;
-                posY += maxHeight;
-            }
-
-            return subsections;
-        }
-
         int threadCount = Environment.ProcessorCount;
-
-
-        public static void ResultCallback(SectionMandelbrotModel section)
-        {
-            // For now we aren't doing anything in the callback method, and it could be removed
-        }
-
-        public void AddResultsToImage(SectionMandelbrotModel section)
-        {
-            int pointX;
-            int pointY;
-
-            for (int x = 0; x < section.SectionBitmap.Width; x++) 
-            {
-                pointX = x + section.PointStartX;
-
-                for (int y = 0; y < section.SectionBitmap.Height; y++)
-                {
-                    pointY = y + section.PointStartY;
-
-                    _bm.SetPixel(pointX, pointY, section.SectionBitmap.GetPixel(x, y));
-                }
-            }
-        }
 
         private void buttonSaveImage_Click(object sender, EventArgs e)
         {
