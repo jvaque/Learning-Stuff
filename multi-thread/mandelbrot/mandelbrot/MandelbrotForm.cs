@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -65,7 +65,7 @@ namespace mandelbrot
                         format = ImageFormat.Bmp;
                         break;
                 }
-                pictureBoxMandelbrot.Image.Save(sfd.FileName, format);
+                _mbGenerator.Image.Save(sfd.FileName, format);
             }
         }
     }

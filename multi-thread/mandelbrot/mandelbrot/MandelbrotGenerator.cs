@@ -19,26 +19,30 @@ namespace mandelbrot
         public MandelbrotGenerator(int width, int height)
         {
             Image = new Bitmap(width, height);
-            // double aOffset = 0;
-            // double bOffset = 0;
-            // double aOffset = 0.2599;
-            // double bOffset = 0.0015;
-            // double aOffset = -0.75;
-            // double bOffset = 0.015;
-            // double aOffset = -1.315180982097868;
-            // double bOffset = 0.073481649996795;
+            // AOffset = 0;
+            // BOffset = 0;
+            // AOffset = 0.2599;
+            // BOffset = 0.0015;
+            // AOffset = -0.75;
+            // BOffset = 0.015;
+            // AOffset = -1.315180982097868;
+            // BOffset = 0.073481649996795;
             AOffset = -0.761574;
             BOffset = -0.0847596;
+            // Scale = 1;
             Scale = 0.001;
             Iterations = 255;
         }
 
         public Bitmap Calculate()
         {
+            double widthDouble = Image.Width;
+            double heightDouble = Image.Height;
+
             double scaleX = Scale;
             double scaleY = Scale;
 
-            double aspectRatio = Image.Width / Image.Height;
+            double aspectRatio = widthDouble / heightDouble;
 
             if (aspectRatio > 1d)
             {
@@ -58,14 +62,14 @@ namespace mandelbrot
             foreach (var section in subsections)
             {
                 // Mention that for this use case the use of a delegate is not neccesary
-                ThreadWithState tws = new(section, Iterations, Image.Width, Image.Height, scaleX, scaleY, AOffset, BOffset, new CallbackDelegate(ResultCallback));
+                ThreadWithState tws = new(section, Iterations, widthDouble, heightDouble, scaleX, scaleY, AOffset, BOffset, new CallbackDelegate(ResultCallback));
                 threads.Add(new Thread(new ThreadStart(tws.ThreadProc)));
             }
             foreach (var thread in threads)
             {
                 thread.Start();
             }
-            
+
             // Wait for all threads to complete
             foreach (var thread in threads)
             {

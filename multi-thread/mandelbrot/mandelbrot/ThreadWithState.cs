@@ -88,7 +88,7 @@ namespace mandelbrot
             for (iteration = 0; iteration < maxIterations; iteration++)
             {
                 z = Complex.Pow(z, 2) + c;
-                
+
                 if (z.Magnitude > 2)
                 {
                     break;
