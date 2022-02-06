@@ -66,8 +66,8 @@ namespace mandelbrot
                     double a = (((pointX / _windowWidth) - 0.5) * 4 * _scaleX) + _aOffset;
                     double b = (((-pointY / _windowHeight) + 0.5) * 4 * _scaleY) + _bOffset;
 
-                    Complex c = new Complex(a, b);
-                    Complex z = new Complex(0, 0);
+                    Complex c = new(a, b);
+                    Complex z = new(0, 0);
 
                     int iterationsRun = CalculateMandelbrot(z, c, _iterations);
 
@@ -80,7 +80,8 @@ namespace mandelbrot
                 _callbackDelegate(_section);
             }
         }
-        private int CalculateMandelbrot(Complex z, Complex c, int maxIterations)
+
+        private static int CalculateMandelbrot(Complex z, Complex c, int maxIterations)
         {
             int iteration;
 
@@ -97,7 +98,7 @@ namespace mandelbrot
             return iteration;
         }
 
-        private Color GetColor(int iterationsRun, int maxIterations)
+        private static Color GetColor(int iterationsRun, int maxIterations)
         {
             if (iterationsRun == maxIterations)
             {

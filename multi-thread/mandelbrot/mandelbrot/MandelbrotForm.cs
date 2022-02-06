@@ -14,10 +14,11 @@ namespace mandelbrot
 {
     public partial class MandelbrotForm : Form
     {
-        private Bitmap _bm;
         //private MandelbrotGenerator _mbGenerator = new(1920, 1080);
         private MandelbrotGenerator _mbGenerator = new(3840, 2160);
         //private MandelbrotGenerator _mbGenerator = new(16000,9000);
+
+        int threadCount = Environment.ProcessorCount;
 
         public MandelbrotForm()
         {
@@ -46,11 +47,9 @@ namespace mandelbrot
             buttonStart.Enabled = true;
         }
 
-        int threadCount = Environment.ProcessorCount;
-
         private void buttonSaveImage_Click(object sender, EventArgs e)
         {
-            SaveFileDialog sfd = new SaveFileDialog();
+            SaveFileDialog sfd = new();
             sfd.FileName = $"Mandelbrot_{DateTime.Now:yyyy-MM-dd_HHmmss}.png";
             sfd.Filter = "PNG Image(*.png)|*.png|JPG Image(*.jpg)|*.jpg|BMP Image(*.bmp)|*.bmp";
             ImageFormat format = ImageFormat.Png;

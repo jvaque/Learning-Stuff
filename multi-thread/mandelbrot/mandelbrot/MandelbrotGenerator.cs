@@ -35,13 +35,10 @@ namespace mandelbrot
 
         public Bitmap Calculate()
         {
-            double width = Image.Width;
-            double heigh = Image.Height;
-
             double scaleX = Scale;
             double scaleY = Scale;
 
-            double aspectRatio = width / heigh;
+            double aspectRatio = Image.Width / Image.Height;
 
             if (aspectRatio > 1d)
             {
@@ -53,7 +50,7 @@ namespace mandelbrot
             }
 
             // Divide x, y coordinates into squares
-            List<SectionMandelbrotModel> subsections = GenerateListOfSubsections(Image.Width, Image.Height);
+            List<SectionMandelbrotModel> subsections = GenerateListOfSubsections();
 
             List<Thread> threads = new();
 
@@ -61,7 +58,7 @@ namespace mandelbrot
             foreach (var section in subsections)
             {
                 // Mention that for this use case the use of a delegate is not neccesary
-                ThreadWithState tws = new ThreadWithState(section, Iterations, width, heigh, scaleX, scaleY, AOffset, BOffset, new CallbackDelegate(ResultCallback));
+                ThreadWithState tws = new(section, Iterations, Image.Width, Image.Height, scaleX, scaleY, AOffset, BOffset, new CallbackDelegate(ResultCallback));
                 threads.Add(new Thread(new ThreadStart(tws.ThreadProc)));
             }
             foreach (var thread in threads)
@@ -84,11 +81,11 @@ namespace mandelbrot
             return Image;
         }
 
-        private List<SectionMandelbrotModel> GenerateListOfSubsections(int width, int height)
+        private List<SectionMandelbrotModel> GenerateListOfSubsections()
         {
             int maxWidth = 200;
             int maxHeight = 200;
-            List<SectionMandelbrotModel> subsections = new List<SectionMandelbrotModel>();
+            List<SectionMandelbrotModel> subsections = new();
 
             int bitmapWidth = maxWidth;
             int bitmapHeight = maxHeight;
@@ -96,19 +93,19 @@ namespace mandelbrot
             int posX = 0;
             int posY = 0;
 
-            while (posY < height)
+            while (posY < Image.Height)
             {
                 // test if out of bounds
-                if (posY + maxHeight > height)
+                if (posY + maxHeight > Image.Height)
                 {
-                    bitmapHeight = height - posY;
+                    bitmapHeight = Image.Height - posY;
                 }
-                while (posX < width)
+                while (posX < Image.Width)
                 {
                     // test if out of bounds
-                    if (posX + maxWidth > width)
+                    if (posX + maxWidth > Image.Width)
                     {
-                        bitmapWidth = width - posX;
+                        bitmapWidth = Image.Width - posX;
                     }
 
                     // add model to list
