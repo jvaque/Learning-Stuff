@@ -13,6 +13,12 @@ sudo apt install nasm
 
 To assemble first need to run `nasm -f elf64 -o hello-world.o hello-world.asm` that gives us an object file and then we need to link it using `ld hello-world.o -o hello-world`
 
+ELF stands for Executable and Linkable Format
+
 Make sure to use only **LF** line end sequence
 
 Look into using **gas** instead of **nasm**
+
+### References
+
+[x86_64 Linux Assembly](https://www.youtube.com/playlist?list=PLetF-YjXm-sCH6FrTz4AQhfH6INDQvQSn) playlist by [kupala](https://www.youtube.com/user/khoraski)
