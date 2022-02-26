@@ -15,6 +15,8 @@ To assemble first need to run `nasm -f elf64 -o hello-world.o hello-world.asm` t
 
 ELF stands for Executable and Linkable Format
 
+BSS stands for Block Starting Symbol
+
 Make sure to use only **LF** line end sequence
 
 Look into using **gas** instead of **nasm**
