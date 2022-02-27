@@ -1,10 +1,11 @@
 ; data section is where data is defined before compilation
 section .data
-        text db "Hello, World!",10      ;Define bytes "Hello, World!\n" and
-                                        ; label the memory address as "text" 
+        query db "What is your name? "
+        greeting db "Hello, "
 
 ; bss section is where data is allocated for future use
-;hello-world program doesn't need a bss section
+section .bss
+        name resb 16                    ;Reserve 16 bytes
 
 ; text section is where the actual code goes
 section .text
@@ -12,14 +13,44 @@ section .text
 
 ;_start is a label for a section of code
 _start:
-                                        ; sys_write(1, text, 14)
-        mov rax, 1                      ;System call ID for sys_write
-        mov rdi, 1                      ;File descriptor for Standard Output
-        mov rsi, text                   ;Location in memory for the string to write
-        mov rdx, 14                     ;Length of the string to write
-        syscall                         ;Invoke kernel system call
+        call _printQuery
+        call _getName
+        call _printGreeting
+        call _printName
 
                                         ; sys_exit(0)
         mov rax, 60                     ;System call ID for sys_exit
         mov rdi, 0                      ;Error code value for no error
         syscall                         ;Invoke kernel system call
+
+_getName:
+        mov rax, 0
+        mov rdi, 0
+        mov rsi, name
+        mov rdx, 16
+        syscall
+        ret
+
+_printQuery:
+        mov rax, 1
+        mov rdi, 1
+        mov rsi, query
+        mov rdx, 19
+        syscall
+        ret
+
+_printGreeting:
+        mov rax, 1
+        mov rdi, 1
+        mov rsi, greeting
+        mov rdx, 7
+        syscall
+        ret
+
+_printName:
+        mov rax, 1
+        mov rdi, 1
+        mov rsi, name
+        mov rdx, 16
+        syscall
+        ret
