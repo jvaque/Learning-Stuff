@@ -34,7 +34,7 @@ _printIntLoop_ParseInt:
         mov rbx, 10                             ;Divide by ten
         div rbx
         push rax
-        add rdx, 48                             ;Flipping bits to convert binary number to ascii
+        add rdx, 48                             ;Flipping bits to convert binary number to ascii representation
 
         mov rcx, [digitSpacePos]
         mov [rcx], dl
@@ -44,6 +44,10 @@ _printIntLoop_ParseInt:
         pop rax
         cmp rax, 0
         jne _printIntLoop_ParseInt
+
+        mov rcx, [digitSpacePos]                ;Decrement ponter by one, so that the pointer is pointing to the last
+        dec rcx                                 ;added ascii character in the buffer and not to the next free location
+        mov [digitSpacePos], rcx                ;on the buffer
 
 _printIntLoop_PrintChar:
         mov rcx, [digitSpacePos]
