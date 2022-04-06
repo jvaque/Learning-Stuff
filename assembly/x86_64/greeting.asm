@@ -24,7 +24,7 @@ _start:
         syscall                         ;Invoke kernel system call
 
 _getName:
-        mov rax, 0
+        mov rax, 0                      ; sys_read
         mov rdi, 0
         mov rsi, name
         mov rdx, 16
