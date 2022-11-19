@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -41,7 +41,9 @@ namespace mandelbrot
             {
                 buttonStart.Text = "Running";
 
-                pictureBoxMandelbrot.Image = BitmapResize(_mbGenerator.Calculate(), pictureBoxMandelbrot.Width, pictureBoxMandelbrot.Height);
+                Bitmap bmp = _mbGenerator.CalculateMultiThreaded();
+
+                pictureBoxMandelbrot.Image = BitmapResize(bmp, pictureBoxMandelbrot.Width, pictureBoxMandelbrot.Height);
 
                 buttonStart.Text = "Clear";
             }
