@@ -33,7 +33,7 @@ namespace mandelbrot
             InitializeComponent();
         }
 
-        private void buttonStart_Click(object sender, EventArgs e)
+        private async void buttonStart_Click(object sender, EventArgs e)
         {
             buttonStart.Enabled = false;
 
@@ -41,7 +41,14 @@ namespace mandelbrot
             {
                 buttonStart.Text = "Running";
 
-                Bitmap bmp = _mbGenerator.CalculateMultiThreaded();
+                // Manual thread implementation
+                // Bitmap bmp = _mbGenerator.CalculateMultiThreaded();
+
+                // Multi task implementation
+                Bitmap bmp = await Task.Run(() =>
+                {
+                    return _mbGenerator.CalculateMultiTask();
+                });
 
                 pictureBoxMandelbrot.Image = BitmapResize(bmp, pictureBoxMandelbrot.Width, pictureBoxMandelbrot.Height);
 

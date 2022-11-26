@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -114,6 +115,67 @@ namespace mandelbrot
             return Image;
         }
 
+        // If being called from an UI Thread call using Task.Run()
+        public async Task<Bitmap> CalculateMultiTask()
+        {
+            // Divide x, y coordinates into squares
+            List<SectionMandelbrotModel> subsections = GenerateListOfSubsections();
+
+            List<Task<SectionMandelbrotModel>> tasks = new();
+
+            foreach (var section in subsections)
+            {
+                tasks.Add(Task.Run(() =>
+                {
+                    return CalculateMandelbrotSubsection(section);
+                }));
+            }
+
+            // Add section results to the final image as they are processed
+            while (tasks.Any())
+            {
+                Task<SectionMandelbrotModel> finishedTask = await Task.WhenAny(tasks);
+
+                tasks.Remove(finishedTask);
+
+                AddResultsToImage(await finishedTask);
+            }
+
+            // // Add section results to the final image once all finish processing
+            // SectionMandelbrotModel[] subsectionResults = await Task.WhenAll(tasks);
+
+            // foreach (var section in subsectionResults)
+            // {
+            //     AddResultsToImage(section);
+            // }
+
+            return Image;
+        }
+
+        // If being called from an UI Thread call using Task.Run()
+        public Bitmap Calculate()
+        {
+            SectionMandelbrotModel sectionMandelbrotModel = new SectionMandelbrotModel
+            {
+               SectionBitmap = new Bitmap(Image.Width, Image.Height),
+               PointStartX = 0,
+               PointStartY = 0,
+               Iterations = Iterations,
+               WindowWidth = _widthDouble,
+               WindowHeight = _heightDouble,
+               ScaleX = _scaleX,
+               ScaleY = _scaleY,
+               AOffset = _aOffset,
+               BOffset = _bOffset
+            };
+
+            SectionMandelbrotModel result = CalculateMandelbrotSubsection(sectionMandelbrotModel);
+
+            _image = result.SectionBitmap;
+
+            return Image;
+        }
+
         private List<SectionMandelbrotModel> GenerateListOfSubsections()
         {
             int maxWidth = 200;
@@ -181,6 +243,66 @@ namespace mandelbrot
 
                     Image.SetPixel(pointX, pointY, section.SectionBitmap.GetPixel(x, y));
                 }
+            }
+        }
+
+        private SectionMandelbrotModel CalculateMandelbrotSubsection(SectionMandelbrotModel section)
+        {
+            int pointX;
+            int pointY;
+
+            for (int x = 0; x < section.SectionBitmap.Width; x++)
+            {
+                pointX = section.PointStartX + x;
+
+                for (int y = 0; y < section.SectionBitmap.Height; y++)
+                {
+                    pointY = section.PointStartY + y;
+                    double a = (((pointX / section.WindowWidth) - 0.5) * 4 * section.ScaleX) + section.AOffset;
+                    double b = (((-pointY / section.WindowHeight) + 0.5) * 4 * section.ScaleY) + section.BOffset;
+                    Complex c = new(a, b);
+                    Complex z = new(0, 0);
+                    int iterationsRun = CalculateMandelbrotPoint(z, c, section.Iterations);
+
+                    section.SectionBitmap.SetPixel(x, y, GetColor(iterationsRun, section.Iterations));
+                }
+            }
+
+            return section;
+        }
+
+        private static int CalculateMandelbrotPoint(Complex z, Complex c, int maxIterations)
+        {
+            int iteration;
+
+            for (iteration = 0; iteration < maxIterations; iteration++)
+            {
+                z = Complex.Pow(z, 2) + c;
+
+                if (z.Magnitude > 2)
+                {
+                    break;
+                }
+            }
+
+            return iteration;
+        }
+
+        private static Color GetColor(int iterationsRun, int maxIterations)
+        {
+            if (iterationsRun == maxIterations)
+            {
+                return Color.Black;
+            }
+            else
+            {
+                double normalizedIterations = (double)(iterationsRun) / maxIterations;
+
+                int blueness = (int)(255 * normalizedIterations);
+
+                return Color.FromArgb(40, 10, blueness);
+                //return Color.FromArgb(blueness);
+                //return Color.White;
             }
         }
 
