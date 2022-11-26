@@ -24,7 +24,7 @@ namespace mandelbrot
         //private MandelbrotGenerator _mbGenerator = new(1000, 2000);
         //private MandelbrotGenerator _mbGenerator = new(3840, 2160);
         //private MandelbrotGenerator _mbGenerator = new(2160, 3840);
-        //private MandelbrotGenerator _mbGenerator = new(16000,9000);
+        //private MandelbrotGenerator _mbGenerator = new(16000, 9000);
 
         int threadCount = Environment.ProcessorCount;
 

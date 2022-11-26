@@ -91,7 +91,7 @@ namespace mandelbrot
             foreach (var section in subsections)
             {
                 // Mention that for this use case the use of a delegate is not neccesary
-                ThreadWithState tws = new(section, Iterations, _widthDouble, _heightDouble, _scaleX, _scaleY, _aOffset, _bOffset, new CallbackDelegate(ResultCallback));
+                ThreadWithState tws = new(section, new CallbackDelegate(ResultCallback));
                 threads.Add(new Thread(new ThreadStart(tws.ThreadProc)));
             }
             foreach (var thread in threads)
@@ -146,7 +146,14 @@ namespace mandelbrot
                     {
                         SectionBitmap = new Bitmap(bitmapWidth, bitmapHeight),
                         PointStartX = posX,
-                        PointStartY = posY
+                        PointStartY = posY,
+                        Iterations = Iterations,
+                        WindowWidth = _widthDouble,
+                        WindowHeight = _heightDouble,
+                        ScaleX = _scaleX,
+                        ScaleY = _scaleY,
+                        AOffset = _aOffset,
+                        BOffset = _bOffset
                     });
 
                     posX += maxWidth;

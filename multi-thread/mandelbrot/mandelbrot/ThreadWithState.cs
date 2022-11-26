@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Numerics;
 
@@ -11,13 +11,6 @@ namespace mandelbrot
     {
         // State information used in the task.
         private SectionMandelbrotModel _section;
-        private int _iterations;
-        private double _windowWidth;
-        private double _windowHeight;
-        private double _scaleX;
-        private double _scaleY;
-        private double _aOffset;
-        private double _bOffset;
 
         // Delegate used to execute the callback method when the
         // task is complete.
@@ -26,23 +19,9 @@ namespace mandelbrot
         // The constructor obtains the state information.
         public ThreadWithState(
             SectionMandelbrotModel section,
-            int iterations,
-            double windowWidth,
-            double windowHeight,
-            double scaleX,
-            double scaleY,
-            double aOffset,
-            double bOffset,
             CallbackDelegate callbackDelegate)
         {
             _section = section;
-            _iterations = iterations;
-            _windowWidth = windowWidth;
-            _windowHeight = windowHeight;
-            _scaleX = scaleX;
-            _scaleY = scaleY;
-            _aOffset = aOffset;
-            _bOffset = bOffset;
             _callbackDelegate = callbackDelegate;
         }
 
@@ -63,15 +42,15 @@ namespace mandelbrot
                 {
                     pointY = _section.PointStartY + y;
 
-                    double a = (((pointX / _windowWidth) - 0.5) * 4 * _scaleX) + _aOffset;
-                    double b = (((-pointY / _windowHeight) + 0.5) * 4 * _scaleY) + _bOffset;
+                    double a = (((pointX / _section.WindowWidth) - 0.5) * 4 * _section.ScaleX) + _section.AOffset;
+                    double b = (((-pointY / _section.WindowHeight) + 0.5) * 4 * _section.ScaleY) + _section.BOffset;
 
                     Complex c = new(a, b);
                     Complex z = new(0, 0);
 
-                    int iterationsRun = CalculateMandelbrot(z, c, _iterations);
+                    int iterationsRun = CalculateMandelbrot(z, c, _section.Iterations);
 
-                    _section.SectionBitmap.SetPixel(x, y, GetColor(iterationsRun, _iterations));
+                    _section.SectionBitmap.SetPixel(x, y, GetColor(iterationsRun, _section.Iterations));
                 }
             }
 
