@@ -1,4 +1,4 @@
-# Leaning-Stuff
+# Learning-Stuff
 
 This repo is to be the home of different things to play with to avoid having dozens of projects when learning new stuff.
 
