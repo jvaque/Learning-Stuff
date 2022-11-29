@@ -4,7 +4,23 @@ Following the [Ray Tracing books](https://github.com/RayTracing/raytracing.githu
 
 ## CMake
 
-Need to figure out how to use
+Need to figure out more about CMake!
+
+Set up CMake build directory.
+
+```
+$ mkdir build
+$ cd build
+$ cmake ..
+```
+
+Build InOneWeekend source code.
+
+```
+$ make inOneWeekend
+```
+
+??? `cmake -S ./ -B ./build` ???
 
 ## Project structure
 
