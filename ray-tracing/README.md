@@ -25,3 +25,9 @@ $ make inOneWeekend
 ## Project structure
 
 TBD
+
+```
+./inOneWeekend > ../images/InOneWeekend/image_xx.ppm
+```
+
+View images using the (PBM/PPM/PGM Viewer for Visual Studio Code)[https://marketplace.visualstudio.com/items?itemName=ngtystr.ppm-pgm-viewer-for-vscode] VS Code extension
