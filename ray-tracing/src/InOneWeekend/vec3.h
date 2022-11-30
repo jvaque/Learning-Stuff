@@ -4,9 +4,6 @@
 #include <cmath>
 #include <iostream>
 
-// Personaly don't like the idea of top level usings so might change this
-using std::sqrt;
-
 class vec3
 {
     public:
@@ -44,7 +41,7 @@ class vec3
 
         double length() const
         {
-            return sqrt(length_squared());
+            return std::sqrt(length_squared());
         }
 
         double length_squared() const
@@ -52,8 +49,7 @@ class vec3
             return e[0]*e[0] + e[1]*e[1] + e[2]*e[2];
         }
 
-    // In the book this is declared as public, but think this should be private
-    public:
+    private:
         double e[3];
 };
 
