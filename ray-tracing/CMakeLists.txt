@@ -14,16 +14,17 @@ project ( RTWeekend
 # Set to c++11
 set ( CMAKE_CXX_STANDARD 11 )
 
-# # Source
-# set ( COMMON_ALL
+# Source
+set ( COMMON_ALL
 #   src/common/rtweekend.h
 #   src/common/camera.h
 #   src/common/ray.h
-#   src/common/vec3.h
-# )
+  src/common/vec3.h
+  src/common/color.h
+)
 
 set ( SOURCE_ONE_WEEKEND
-#   ${COMMON_ALL}
+  ${COMMON_ALL}
 #   src/InOneWeekend/hittable.h
 #   src/InOneWeekend/hittable_list.h
 #   src/InOneWeekend/material.h
@@ -80,4 +81,4 @@ add_executable(inOneWeekend      ${SOURCE_ONE_WEEKEND})
 # add_executable(sphere_importance src/TheRestOfYourLife/sphere_importance.cc ${COMMON_ALL})
 # add_executable(sphere_plot       src/TheRestOfYourLife/sphere_plot.cc       ${COMMON_ALL})
 
-# include_directories(src/common)
+include_directories(src/common)
