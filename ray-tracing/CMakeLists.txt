@@ -17,7 +17,7 @@ set ( CMAKE_CXX_STANDARD 11 )
 # Source
 set ( COMMON_ALL
   src/common/rtweekend.h
-#   src/common/camera.h
+  src/common/camera.h
   src/common/ray.h
   src/common/vec3.h
   src/common/color.h
