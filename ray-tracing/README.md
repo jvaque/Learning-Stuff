@@ -2,6 +2,12 @@
 
 Following the [Ray Tracing books](https://github.com/RayTracing/raytracing.github.io/tree/master) v3.2.3 to do some ray tracing in cpp
 
+## Build environment
+
+```
+$ sudo apt install build-essential
+```
+
 ## CMake
 
 Need to figure out more about CMake!

@@ -27,7 +27,7 @@ set ( SOURCE_ONE_WEEKEND
   ${COMMON_ALL}
   src/InOneWeekend/hittable.h
   src/InOneWeekend/hittable_list.h
-#   src/InOneWeekend/material.h
+  src/InOneWeekend/material.h
   src/InOneWeekend/sphere.h
   src/InOneWeekend/main.cc
 )
