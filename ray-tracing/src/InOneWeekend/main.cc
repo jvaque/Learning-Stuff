@@ -71,7 +71,6 @@ hittable_list random_scene()
                 {
                     // glass
                     sphere_material = std::make_shared<dielectric>(1.5);
-                    // add two wold.add for glass//
                     world.add(std::make_shared<sphere>(center, 0.2, sphere_material));
                 }
             }
