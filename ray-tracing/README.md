@@ -20,10 +20,11 @@ $ cd build
 $ cmake ..
 ```
 
-Build InOneWeekend source code.
+Build source code for the different projects.
 
 ```
 $ make inOneWeekend
+$ make theNextWeek
 ```
 
 ??? `cmake -S ./ -B ./build` ???
@@ -34,6 +35,7 @@ TBD
 
 ```
 ./inOneWeekend > ../images/InOneWeekend/image_xx.ppm
+./theNextWeek > ../images/TheNextWeek/image_xx.ppm
 ```
 
 View images using the (PBM/PPM/PGM Viewer for Visual Studio Code)[https://marketplace.visualstudio.com/items?itemName=ngtystr.ppm-pgm-viewer-for-vscode] VS Code extension
