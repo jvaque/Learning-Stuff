@@ -33,8 +33,8 @@ set ( SOURCE_ONE_WEEKEND
 )
 
 set ( SOURCE_NEXT_WEEK
-#   ${COMMON_ALL}
-#   src/common/aabb.h
+  ${COMMON_ALL}
+  src/common/aabb.h
 #   src/common/external/stb_image.h
 #   src/common/perlin.h
 #   src/common/rtw_stb_image.h
