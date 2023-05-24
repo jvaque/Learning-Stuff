@@ -41,7 +41,7 @@ set ( SOURCE_NEXT_WEEK
 #   src/common/texture.h
 #   src/TheNextWeek/aarect.h
 #   src/TheNextWeek/box.h
-#   src/TheNextWeek/bvh.h
+  src/TheNextWeek/bvh.h
 #   src/TheNextWeek/constant_medium.h
   src/TheNextWeek/hittable.h
   src/TheNextWeek/hittable_list.h
