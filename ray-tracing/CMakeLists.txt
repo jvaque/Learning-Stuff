@@ -39,7 +39,7 @@ set ( SOURCE_NEXT_WEEK
   src/common/perlin.h
   src/common/rtw_stb_image.h
   src/common/texture.h
-#   src/TheNextWeek/aarect.h
+  src/TheNextWeek/aarect.h
 #   src/TheNextWeek/box.h
   src/TheNextWeek/bvh.h
 #   src/TheNextWeek/constant_medium.h
