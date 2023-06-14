@@ -138,6 +138,9 @@ hittable_list simple_light()
     auto difflight = std::make_shared<diffuse_light>(color(4, 4, 4));
     objects.add(std::make_shared<xy_rect>(3, 5, 1, 3, -2, difflight));
 
+    objects.add(std::make_shared<sphere>(point3(0, 7, 0), 2, difflight));
+    objects.add(std::make_shared<sphere>(point3(10, 4, 8), 2, difflight));
+
     return objects;
 }
 
