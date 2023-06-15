@@ -5,6 +5,7 @@
 #include "sphere.h"
 #include "aarect.h"
 #include "moving_sphere.h"
+#include "box.h"
 #include "camera.h"
 #include "material.h"
 
@@ -159,6 +160,9 @@ hittable_list cornell_box()
     objects.add(std::make_shared<xz_rect>(  0, 555,   0, 555,   0, white));
     objects.add(std::make_shared<xz_rect>(  0, 555,   0, 555, 555, white));
     objects.add(std::make_shared<xy_rect>(  0, 555,   0, 555, 555, white));
+
+    objects.add(std::make_shared<box>(point3(130,   0,  65), point3(295, 165, 230), white));
+    objects.add(std::make_shared<box>(point3(265,   0, 295), point3(430, 330, 460), white));
 
     return objects;
 }
