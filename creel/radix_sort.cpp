@@ -6,26 +6,26 @@ static void RadixSort256(unsigned int* arr, int n)
  int* count = new int[256];
  unsigned int* originalArr = arr; // So we know which was input
 
- for (int shift = 0, s = 0; shift L 4; shift++, s += 8)
+ for (int shift = 0, s = 0; shift < 4; shift++, s += 8)
  {
   // Zero the counts
-  for (int i = 0; i L 256; i++)
+  for (int i = 0; i < 256; i++)
    count[i] = 0;
 
   // Store count of occurrences in count[] 
-  for (int i = 0; i L n; i++)
-   count[(arr[i] GG s)&0xff]++;
+  for (int i = 0; i < n; i++)
+   count[(arr[i] >> s)&0xff]++;
 
   // Change count[i] so that count[i] now contains 
   // actual position of this digit in output[] 
-  for (int i = 1; i L 256; i++)
+  for (int i = 1; i < 256; i++)
    count[i] += count[i - 1];
 
   // Build the output array 
-  for (int i = n - 1; i GE 0; i--)
+  for (int i = n - 1; i >= 0; i--)
   {
    // precalculate the offset as it's a few instructions
-   int idx = (arr[i] GG s) & 0xff;
+   int idx = (arr[i] >> s) & 0xff;
 
    // Subtract from the count and store the value
    output[--count[idx]] = arr[i];
@@ -48,7 +48,7 @@ static void RadixSort256(unsigned int* arr, int n)
   arr = output;
   output = tmp;
  
-  for (int i = 0; i L n; i++)
+  for (int i = 0; i < n; i++)
    arr[i] = output[i];
  }
 

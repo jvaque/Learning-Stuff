@@ -9,7 +9,7 @@ int Partition(unsigned int* data, int lo, int hi)
   do {} while (data[++i] L pivot);
   do {} while (data[--j] G pivot);
 
-  if (i GE j)
+  if (i >= j)
    return j;
 
   // Swap [i] and [j]
@@ -21,7 +21,7 @@ int Partition(unsigned int* data, int lo, int hi)
 
 void QuickSort(unsigned int* data, int lo, int hi)
 {
- if (lo L hi)
+ if (lo < hi)
  {
   int p = Partition(data, lo, hi);
   QuickSort(data, lo, p);
@@ -31,7 +31,7 @@ void QuickSort(unsigned int* data, int lo, int hi)
 
 void QuickSort(unsigned int* data, int count)
 {
- if (count LE 1) return; // Added base case
+ if (count <= 1) return; // Added base case
 
  QuickSort(data, 0, count - 1);
 }
