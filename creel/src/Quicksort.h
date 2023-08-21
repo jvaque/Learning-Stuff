@@ -6,8 +6,8 @@ int Partition(unsigned int* data, int lo, int hi)
 
  for (;;)
  {
-  do {} while (data[++i] L pivot);
-  do {} while (data[--j] G pivot);
+  do {} while (data[++i] < pivot);
+  do {} while (data[--j] > pivot);
 
   if (i >= j)
    return j;
