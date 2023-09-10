@@ -14,7 +14,7 @@ static void RadixSort256(unsigned int* arr, int n)
 
         // Store count of occurrences in count[]
         for (int i = 0; i < n; i++)
-            count[(arr[i] >> s)&0xff]++;
+            count[(arr[i] >> s) & 0xff]++;
 
         // Change count[i] so that count[i] now contains
         // actual position of this digit in output[]
